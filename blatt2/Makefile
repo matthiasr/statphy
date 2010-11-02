@@ -1,4 +1,5 @@
 CFLAGS=-O3 -fopenmp
+LDFLAGS=-lm
 
 all: aufg7
 
