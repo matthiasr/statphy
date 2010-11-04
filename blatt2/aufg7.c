@@ -12,7 +12,7 @@
 
 #define K_B 1.3806504E-23
 
-double maxwell(double v)
+long double maxwell(long double v)
 {
     return v*v*exp(-v*v);
 }
@@ -26,22 +26,22 @@ int main(int argc, const char* argv[])
     }
 
     long i;
-    double sum = 0.0;
+    long double sum = 0.0;
 
     /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
-    const double m = strtod(argv[1],(char**)NULL);
-    const double T = strtod(argv[2],(char**)NULL);
+    const long double m = strtold(argv[1],(char**)NULL);
+    const long double T = strtold(argv[2],(char**)NULL);
 
-    const double v_min = strtod(argv[3],(char**)NULL) * sqrt(m/(2*K_B*T));
-    const double v_max = strtod(argv[4],(char**)NULL) * sqrt(m/(2*K_B*T));
+    const long double v_min = strtold(argv[3],(char**)NULL) * sqrt(m/(2*K_B*T));
+    const long double v_max = strtold(argv[4],(char**)NULL) * sqrt(m/(2*K_B*T));
     const long steps = strtol(argv[5],(char**)NULL,10);
 
-    const double dv = (v_max - v_min) / steps;
+    const long double dv = (v_max - v_min) / steps;
 
 #ifdef DEBUG
-    printf("m=%g T=%g v_min=%g v_max=%g steps=%d dv=%g\n", \
+    printf("m=%Lg T=%Lg v_min=%Lg v_max=%Lg steps=%d dv=%Lg\n", \
             m,T,v_min,v_max,(int)steps,dv);
-    printf("%g\n", sqrt(2*K_B*T/m));
+    printf("%Lg\n", sqrtl(2*K_B*T/m));
 #endif
 
 #pragma omp parallel for default(shared) private(i) reduction(+:sum)
@@ -56,7 +56,7 @@ int main(int argc, const char* argv[])
 
     sum = sum * 4 / sqrt(M_PI);
 
-    printf("%g\n",sum);
+    printf("%Lg\n",sum);
 
     return 0;
 }
