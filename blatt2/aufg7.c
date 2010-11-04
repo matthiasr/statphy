@@ -40,7 +40,7 @@ int main(int argc, const char* argv[])
 
 #ifdef DEBUG
     printf("m=%g T=%g v_min=%g v_max=%g steps=%d dv=%g\n", \
-            (double)m,(double)T,(double)v_min,(double)v_max,(int)steps,(double)dv);
+            m,T,v_min,v_max,(int)steps,dv);
     printf("%g\n", sqrt(2*K_B*T/m));
 #endif
 
@@ -56,7 +56,7 @@ int main(int argc, const char* argv[])
 
     sum = sum * 4 / sqrt(M_PI);
 
-    printf("%g\n",(double)sum);
+    printf("%g\n",sum);
 
     return 0;
 }
