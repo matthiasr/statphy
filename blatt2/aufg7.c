@@ -17,12 +17,17 @@ static inline long double maxwell(long double v)
     return v*v*exp(-v*v);
 }
 
+static inline void usage(char* progname)
+{
+        fprintf(stderr,"Usage:\n\t%s m T v_min v_max steps\n",progname);
+        exit(1);
+}
+
 int main(int argc, const char* argv[])
 {
     if (argc != 6)
     {
-        printf("Usage:\n\t%s m T v_min v_max steps\n",argv[0]);
-        return 0;
+        usage(argv[0]);
     }
 
     long i;
