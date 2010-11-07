@@ -20,7 +20,7 @@ static inline long double maxwell(long double v)
 
 static inline void usage(const char* progname)
 {
-        fprintf(stderr,"Usage:\n\t%s m T v_min v_max steps\n",progname);
+        fprintf(stderr,"Usage:\n\t%s m T v_min v_max steps\n\nAll values are in SI units.\n",progname);
         exit(1);
 }
 
