@@ -43,8 +43,6 @@ int main(int argc, const char* argv[])
     const long double v_max = strtold(argv[4],(char**)NULL) * sqrt(m/(2*K_B*T));
     const long steps = strtol(argv[5],(char**)NULL,10);
 
-    const long double dv = (v_max - v_min) / steps;
-
     /* rudimentärer Fehlercheck */
     if (errno != 0)
     {
@@ -56,6 +54,17 @@ int main(int argc, const char* argv[])
         fprintf(stderr, "Error: v_max < v_min\n");
         usage(argv[0]);
     }
+    else if ( m < 0 || T < 0 || v_min < 0 || v_max < 0)
+    {
+        fprintf(stderr, "Error: negative values are not allowed\n");
+        usage(argv[0]);
+    }
+    else if ( steps < 1 )
+    {
+        fprintf(stderr, "Error: need at least 1 step");
+    }
+
+    const long double dv = (v_max - v_min) / steps;
 
 #ifdef DEBUG
     printf("m=%Lg T=%Lg v_min=%Lg v_max=%Lg steps=%d dv=%Lg\n", \
