@@ -6,6 +6,7 @@
  * */
 
 #include <stdlib.h>
+#include <errno.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -30,6 +31,7 @@ int main(int argc, const char* argv[])
         usage(argv[0]);
     }
 
+    errno = 0;
     long i;
     long double sum = 0.0;
 
@@ -42,6 +44,18 @@ int main(int argc, const char* argv[])
     const long steps = strtol(argv[5],(char**)NULL,10);
 
     const long double dv = (v_max - v_min) / steps;
+
+    /* rudimentärer Fehlercheck */
+    if (errno != 0)
+    {
+        perror(argv[0]);
+        usage(argv[0]);
+    }
+    else if (v_max < v_min)
+    {
+        fprintf(stderr, "Error: v_max < v_min\n");
+        usage(argv[0]);
+    }
 
 #ifdef DEBUG
     printf("m=%Lg T=%Lg v_min=%Lg v_max=%Lg steps=%d dv=%Lg\n", \
