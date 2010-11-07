@@ -111,14 +111,9 @@ int main(int argc, const char* argv[])
             fprintf(stderr, "Error: v_max < v_min\n");
             usage(argv[0]);
         }
-        else if ( m < 0 || T < 0 || v_min < 0 || v_max < 0)
+        else if ( m <= 0 || T <= 0 || v_min < 0 || v_max < 0 || steps < 1)
         {
-            fprintf(stderr, "Error: negative values are not allowed\n");
-            usage(argv[0]);
-        }
-        else if ( steps < 1 )
-        {
-            fprintf(stderr, "Error: need at least 1 step\n");
+            fprintf(stderr, "Error: values too small\n");
             usage(argv[0]);
         }
     }
