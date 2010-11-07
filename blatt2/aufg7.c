@@ -12,7 +12,7 @@
 
 #define K_B 1.3806504E-23
 
-long double maxwell(long double v)
+static inline long double maxwell(long double v)
 {
     return v*v*exp(-v*v);
 }
