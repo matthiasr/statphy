@@ -18,7 +18,7 @@ static inline long double maxwell(long double v)
     return v*v*exp(-v*v);
 }
 
-static inline void usage(char* progname)
+static inline void usage(const char* progname)
 {
         fprintf(stderr,"Usage:\n\t%s m T v_min v_max steps\n",progname);
         exit(1);
