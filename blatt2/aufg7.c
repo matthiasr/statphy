@@ -61,7 +61,8 @@ int main(int argc, const char* argv[])
     }
     else if ( steps < 1 )
     {
-        fprintf(stderr, "Error: need at least 1 step");
+        fprintf(stderr, "Error: need at least 1 step\n");
+        usage(argv[0]);
     }
 
     const long double dv = (v_max - v_min) / steps;
