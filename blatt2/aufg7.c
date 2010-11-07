@@ -24,6 +24,58 @@ static inline void usage(const char* progname)
         exit(1);
 }
 
+static inline long double readvalue_ld(const char* varname)
+{
+    long double temp;
+    int res = 0;
+    while(1)
+    {
+        errno = 0;
+        printf("%s? ",varname);
+        res = scanf("%Lg",&temp);
+        if (res == EOF)
+        {
+            printf("Error: premature end of input");
+            exit(1);
+        }
+        else if (res < 1) {
+            printf("Error: could not read number");
+            continue;
+        }
+        else
+        {
+            printf("%Lg\n",temp);
+            return temp;
+        }
+    }
+}
+
+static inline long readvalue_l(const char* varname)
+{
+    long temp;
+    int res = 0;
+    while(1)
+    {
+        errno = 0;
+        printf("%s? ",varname);
+        res = scanf("%li",&temp);
+        if (res == EOF)
+        {
+            printf("Error: premature end of input");
+            exit(1);
+        }
+        else if (res < 1) {
+            printf("Error: could not read number");
+            continue;
+        }
+        else
+        {
+            printf("%li\n",temp);
+            return temp;
+        }
+    }
+}
+
 int main(int argc, const char* argv[])
 {
 
