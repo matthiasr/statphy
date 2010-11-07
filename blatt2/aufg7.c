@@ -26,42 +26,52 @@ static inline void usage(const char* progname)
 
 int main(int argc, const char* argv[])
 {
-    if (argc != 6)
-    {
-        usage(argv[0]);
-    }
 
-    errno = 0;
     long i;
     long double sum = 0.0;
 
-    /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
-    const long double m = strtold(argv[1],(char**)NULL);
-    const long double T = strtold(argv[2],(char**)NULL);
+    long double m;
+    long double T;
 
-    const long double v_min = strtold(argv[3],(char**)NULL) * sqrt(m/(2*K_B*T));
-    const long double v_max = strtold(argv[4],(char**)NULL) * sqrt(m/(2*K_B*T));
-    const long steps = strtol(argv[5],(char**)NULL,10);
+    long double v_min;
+    long double v_max;
+    long steps;
 
-    /* rudimentärer Fehlercheck */
-    if (errno != 0)
+    if (argc == 6)
     {
-        perror(argv[0]);
-        usage(argv[0]);
+        errno = 0;
+        /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
+         m = strtold(argv[1],(char**)NULL);
+         T = strtold(argv[2],(char**)NULL);
+
+         v_min = strtold(argv[3],(char**)NULL) * sqrt(m/(2*K_B*T));
+         v_max = strtold(argv[4],(char**)NULL) * sqrt(m/(2*K_B*T));
+         steps = strtol(argv[5],(char**)NULL,10);
+
+        /* rudimentärer Fehlercheck */
+        if (errno != 0)
+        {
+            perror(argv[0]);
+            usage(argv[0]);
+        }
+        else if (v_max < v_min)
+        {
+            fprintf(stderr, "Error: v_max < v_min\n");
+            usage(argv[0]);
+        }
+        else if ( m < 0 || T < 0 || v_min < 0 || v_max < 0)
+        {
+            fprintf(stderr, "Error: negative values are not allowed\n");
+            usage(argv[0]);
+        }
+        else if ( steps < 1 )
+        {
+            fprintf(stderr, "Error: need at least 1 step\n");
+            usage(argv[0]);
+        }
     }
-    else if (v_max < v_min)
+    else
     {
-        fprintf(stderr, "Error: v_max < v_min\n");
-        usage(argv[0]);
-    }
-    else if ( m < 0 || T < 0 || v_min < 0 || v_max < 0)
-    {
-        fprintf(stderr, "Error: negative values are not allowed\n");
-        usage(argv[0]);
-    }
-    else if ( steps < 1 )
-    {
-        fprintf(stderr, "Error: need at least 1 step\n");
         usage(argv[0]);
     }
 
