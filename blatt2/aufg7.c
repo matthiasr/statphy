@@ -161,7 +161,7 @@ int main(int argc, const char* argv[])
 
     sum = sum * 4 / sqrt(M_PI);
 
-    printf("%Lg\n",sum);
+    printf("p = %Lg\n",sum);
 
     return 0;
 }
