@@ -117,6 +117,25 @@ int main(int argc, const char* argv[])
             usage(argv[0]);
         }
     }
+    else if (argc == 1)
+    {
+        m = readvalue_ld("Mass [kg]");
+        T = readvalue_ld("Temperature [K]");
+        v_min = readvalue_ld("Minimum velocity [m/s]") * sqrt(m/(2*K_B*T));
+        v_max = readvalue_ld("Maximum velocity [m/s]") * sqrt(m/(2*K_B*T));
+        steps = readvalue_l("Number of steps");
+        if (v_max < v_min)
+        {
+            fprintf(stderr, "Error: v_max < v_min\n");
+            usage(argv[0]);
+        }
+        else if ( m <= 0 || T <= 0 || v_min < 0 || v_max < 0 || steps < 1)
+        {
+            fprintf(stderr, "Error: values too small\n");
+            usage(argv[0]);
+        }
+        printf("\n");
+    }
     else
     {
         usage(argv[0]);
