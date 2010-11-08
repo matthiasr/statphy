@@ -13,17 +13,20 @@
 
 #define K_B 1.3806504E-23
 
+/* Zu integrierende Verteilungsfunktion */
 static inline long double maxwell(long double v)
 {
     return v*v*exp(-v*v);
 }
 
+/* Hilfetext anzeigen und Programm beenden. Kehrt nie zurück. */
 static inline void usage(const char* progname)
 {
         fprintf(stderr,"Usage:\n\t%s m T v_min v_max steps\n\nAll values are in SI units.\n",progname);
         exit(1);
 }
 
+/* long-double-Wert vom Standardinput lesen */
 static inline long double readvalue_ld(const char* varname)
 {
     long double temp;
@@ -50,6 +53,7 @@ static inline long double readvalue_ld(const char* varname)
     }
 }
 
+/* long-Wert vom Standardinput lesen */
 static inline long readvalue_l(const char* varname)
 {
     long temp;
@@ -79,6 +83,7 @@ static inline long readvalue_l(const char* varname)
 int main(int argc, const char* argv[])
 {
 
+    /* Initialisierung */
     long i;
     long double sum = 0.0;
 
@@ -89,18 +94,18 @@ int main(int argc, const char* argv[])
     long double v_max;
     long steps;
 
-    if (argc == 6)
+    if (argc == 6) /* Eingabe über Kommandozeile */
     {
         errno = 0;
+        m = strtold(argv[1],(char**)NULL);
+        T = strtold(argv[2],(char**)NULL);
+
         /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
-         m = strtold(argv[1],(char**)NULL);
-         T = strtold(argv[2],(char**)NULL);
+        v_min = strtold(argv[3],(char**)NULL) * sqrtl(m/(2*K_B*T));
+        v_max = strtold(argv[4],(char**)NULL) * sqrtl(m/(2*K_B*T));
+        steps = strtol(argv[5],(char**)NULL,10);
 
-         v_min = strtold(argv[3],(char**)NULL) * sqrtl(m/(2*K_B*T));
-         v_max = strtold(argv[4],(char**)NULL) * sqrtl(m/(2*K_B*T));
-         steps = strtol(argv[5],(char**)NULL,10);
-
-        /* rudimentärer Fehlercheck */
+        /* Fehlerchecks */
         if (errno != 0)
         {
             perror(argv[0]);
@@ -117,13 +122,16 @@ int main(int argc, const char* argv[])
             usage(argv[0]);
         }
     }
-    else if (argc == 1)
+    else if (argc == 1) /* Eingabe über Standard-Input */
     {
         m = readvalue_ld("Mass [kg]");
         T = readvalue_ld("Temperature [K]");
+        /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
         v_min = readvalue_ld("Minimum velocity [m/s]") * sqrtl(m/(2*K_B*T));
         v_max = readvalue_ld("Maximum velocity [m/s]") * sqrtl(m/(2*K_B*T));
         steps = readvalue_l("Number of steps");
+
+        /* Fehlerchecks */
         if (v_max < v_min)
         {
             fprintf(stderr, "Error: v_max < v_min\n");
@@ -136,7 +144,7 @@ int main(int argc, const char* argv[])
         }
         printf("\n");
     }
-    else
+    else /* Hilfetext sonst */
     {
         usage(argv[0]);
     }
@@ -149,16 +157,20 @@ int main(int argc, const char* argv[])
     printf("Most probable speed = %Lg\n", sqrtl(2*K_B*T/m));
 #endif
 
+    /* Integrationsschleife, mit OpenMP parallelisierbar */
 #pragma omp parallel for default(shared) private(i) reduction(+:sum)
     for(i=0;i<steps;i++)
     {
 #ifndef TRAPEZ
+        /* Standard-Berechnung über Rechtecke */
         sum = sum + (dv * maxwell(v_min + i*dv));
 #else
+        /* Trapez-Methode. Genauer, aber langsamer */
         sum = sum + (0.5 * dv * (maxwell(v_min + i*dv) + maxwell(v_min + (i-1)*dv)));
 #endif
     }
 
+    /* Normierung des Ergebnisses */
     sum = sum * 4 / sqrtl(M_PI);
 
     printf("p = %Lg\n",sum);
