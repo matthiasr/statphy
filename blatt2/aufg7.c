@@ -96,8 +96,8 @@ int main(int argc, const char* argv[])
          m = strtold(argv[1],(char**)NULL);
          T = strtold(argv[2],(char**)NULL);
 
-         v_min = strtold(argv[3],(char**)NULL) * sqrt(m/(2*K_B*T));
-         v_max = strtold(argv[4],(char**)NULL) * sqrt(m/(2*K_B*T));
+         v_min = strtold(argv[3],(char**)NULL) * sqrtl(m/(2*K_B*T));
+         v_max = strtold(argv[4],(char**)NULL) * sqrtl(m/(2*K_B*T));
          steps = strtol(argv[5],(char**)NULL,10);
 
         /* rudimentärer Fehlercheck */
@@ -121,8 +121,8 @@ int main(int argc, const char* argv[])
     {
         m = readvalue_ld("Mass [kg]");
         T = readvalue_ld("Temperature [K]");
-        v_min = readvalue_ld("Minimum velocity [m/s]") * sqrt(m/(2*K_B*T));
-        v_max = readvalue_ld("Maximum velocity [m/s]") * sqrt(m/(2*K_B*T));
+        v_min = readvalue_ld("Minimum velocity [m/s]") * sqrtl(m/(2*K_B*T));
+        v_max = readvalue_ld("Maximum velocity [m/s]") * sqrtl(m/(2*K_B*T));
         steps = readvalue_l("Number of steps");
         if (v_max < v_min)
         {
@@ -159,7 +159,7 @@ int main(int argc, const char* argv[])
 #endif
     }
 
-    sum = sum * 4 / sqrt(M_PI);
+    sum = sum * 4 / sqrtl(M_PI);
 
     printf("p = %Lg\n",sum);
 
