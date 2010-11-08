@@ -173,7 +173,7 @@ int main(int argc, const char* argv[])
     /* Normierung des Ergebnisses */
     sum = sum * 4 / sqrtl(M_PI);
 
-    printf("p = %Lg\n",sum);
+    printf("p = %.12Lg\n",sum);
 
     return 0;
 }
