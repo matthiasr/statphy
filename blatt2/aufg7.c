@@ -146,7 +146,7 @@ int main(int argc, const char* argv[])
 #ifdef DEBUG
     printf("m=%Lg T=%Lg v_min=%Lg v_max=%Lg steps=%d dv=%Lg\n", \
             m,T,v_min,v_max,(int)steps,dv);
-    printf("%Lg\n", sqrtl(2*K_B*T/m));
+    printf("Most probable speed = %Lg\n", sqrtl(2*K_B*T/m));
 #endif
 
 #pragma omp parallel for default(shared) private(i) reduction(+:sum)
