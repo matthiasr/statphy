@@ -2,7 +2,7 @@
  * */
 
 /* Usage:
- * aufg7 m T v_min v_max steps
+ * aufg7 m T p_min p_max steps
  * */
 
 #include <stdlib.h>
@@ -14,15 +14,15 @@
 #define K_B 1.3806504E-23
 
 /* Zu integrierende Verteilungsfunktion */
-static inline long double maxwell(long double v)
+static inline long double maxwell(long double p)
 {
-    return v*v*exp(-v*v);
+    return p*p*exp(-p*p);
 }
 
 /* Hilfetext anzeigen und Programm beenden. Kehrt nie zurück. */
 static inline void usage(const char* progname)
 {
-        fprintf(stderr,"Usage:\n\t%s m T v_min v_max steps\n\nAll values are in SI units.\n",progname);
+        fprintf(stderr,"Usage:\n\t%s m T p_min p_max steps\n\nAll values are in SI units.\n",progname);
         exit(1);
 }
 
@@ -90,8 +90,8 @@ int main(int argc, const char* argv[])
     long double m;
     long double T;
 
-    long double v_min;
-    long double v_max;
+    long double p_min;
+    long double p_max;
     long steps;
 
     if (argc == 6) /* Eingabe über Kommandozeile */
@@ -100,9 +100,9 @@ int main(int argc, const char* argv[])
         m = strtold(argv[1],(char**)NULL);
         T = strtold(argv[2],(char**)NULL);
 
-        /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
-        v_min = strtold(argv[3],(char**)NULL) * sqrtl(m/(2*K_B*T));
-        v_max = strtold(argv[4],(char**)NULL) * sqrtl(m/(2*K_B*T));
+        /* Verwende numerische Einheiten p' = p / sqrtl(2*m*K_B*T) */
+        p_min = strtold(argv[3],(char**)NULL) / sqrtl(2*m*K_B*T);
+        p_max = strtold(argv[4],(char**)NULL) / sqrtl(2*m*K_B*T);
         steps = strtol(argv[5],(char**)NULL,10);
 
         /* Fehlerchecks */
@@ -111,12 +111,12 @@ int main(int argc, const char* argv[])
             perror(argv[0]);
             usage(argv[0]);
         }
-        else if (v_max < v_min)
+        else if (p_max < p_min)
         {
-            fprintf(stderr, "Error: v_max < v_min\n");
+            fprintf(stderr, "Error: p_max < p_min\n");
             usage(argv[0]);
         }
-        else if ( m <= 0 || T <= 0 || v_min < 0 || v_max < 0 || steps < 1)
+        else if ( m <= 0 || T <= 0 || p_min < 0 || p_max < 0 || steps < 1)
         {
             fprintf(stderr, "Error: values too small\n");
             usage(argv[0]);
@@ -126,18 +126,18 @@ int main(int argc, const char* argv[])
     {
         m = readvalue_ld("Mass [kg]");
         T = readvalue_ld("Temperature [K]");
-        /* Verwende numerische Einheiten v' = sqrt(m/(2*K_B*T)) * v */
-        v_min = readvalue_ld("Minimum velocity [m/s]") * sqrtl(m/(2*K_B*T));
-        v_max = readvalue_ld("Maximum velocity [m/s]") * sqrtl(m/(2*K_B*T));
+        /* Verwende numerische Einheiten p' = p / sqrt(2*m*K_B*T)  */
+        p_min = readvalue_ld("Minimum impulse [kg*m/s]") / sqrtl(2*m*K_B*T);
+        p_max = readvalue_ld("Maximum impulse [kg*m/s]") / sqrtl(2*m*K_B*T);
         steps = readvalue_l("Number of steps");
 
         /* Fehlerchecks */
-        if (v_max < v_min)
+        if (p_max < p_min)
         {
-            fprintf(stderr, "Error: v_max < v_min\n");
+            fprintf(stderr, "Error: p_max < p_min\n");
             usage(argv[0]);
         }
-        else if ( m <= 0 || T <= 0 || v_min < 0 || v_max < 0 || steps < 1)
+        else if ( m <= 0 || T <= 0 || p_min < 0 || p_max < 0 || steps < 1)
         {
             fprintf(stderr, "Error: values too small\n");
             usage(argv[0]);
@@ -149,12 +149,12 @@ int main(int argc, const char* argv[])
         usage(argv[0]);
     }
 
-    const long double dv = (v_max - v_min) / steps;
+    const long double dp = (p_max - p_min) / steps;
 
 #ifdef DEBUG
-    printf("m=%Lg T=%Lg v_min=%Lg v_max=%Lg steps=%d dv=%Lg\n", \
-            m,T,v_min,v_max,(int)steps,dv);
-    printf("Most probable speed = %Lg\n", sqrtl(2*K_B*T/m));
+    printf("m=%Lg T=%Lg p_min=%Lg p_max=%Lg steps=%d dp=%Lg\n", \
+            m,T,p_min,p_max,(int)steps,dp);
+    printf("Most probable impulse = %Lg\n", sqrtl(2*m*K_B*T));
 #endif
 
     /* Integrationsschleife, mit OpenMP parallelisierbar */
@@ -163,10 +163,10 @@ int main(int argc, const char* argv[])
     {
 #ifndef TRAPEZ
         /* Standard-Berechnung über Rechtecke */
-        sum = sum + (dv * maxwell(v_min + i*dv));
+        sum = sum + (dp * maxwell(p_min + i*dp));
 #else
         /* Trapez-Methode. Genauer, aber langsamer */
-        sum = sum + (0.5 * dv * (maxwell(v_min + i*dv) + maxwell(v_min + (i-1)*dv)));
+        sum = sum + (0.5 * dp * (maxwell(p_min + i*dp) + maxwell(p_min + (i-1)*dp)));
 #endif
     }
 
