@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <time.h>
+#include <math.h>
 
 typedef uint64_t lcgstate;
 
@@ -40,6 +41,10 @@ int main(int argc, const char* argv[])
     }
 
     for (i=0;i<count;i++)
-        printf("%u\n",lcg_random(&s));
+#ifdef DEBUG
+        printf("%08x\n",lcg_random(&s));
+#else
+        printf("%.8f\n",lcg_random(&s) / exp2(32));
+#endif
     exit(0);
 }

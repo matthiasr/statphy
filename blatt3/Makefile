@@ -1,3 +1,5 @@
+LDFLAGS=-lm
+
 all: aufg10
 
 aufg10: aufg10.c
