@@ -28,8 +28,11 @@ int main(int argc, const char* argv[])
     switch(argc) {
         case 3:
             s = strtoll(argv[2],NULL,10);
+            count = strtol(argv[1],NULL,10);
+            break;
         case 2:
             count = strtol(argv[1],NULL,10);
+            s = time(NULL);
             break;
         default:
             s = time(NULL);
