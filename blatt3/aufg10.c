@@ -16,7 +16,7 @@ uint32_t lcg_random(lcgstate* s)
 {
     /* Parameters from http://en.wikipedia.org/wiki/Linear_congruential_generator#LCGs_in_common_use */
     *s = 6364136223846793005LLU * (*s) + 1442695040888963407LLU; /* implicit (mod) 2^64 */
-    return *s >> 32;
+    return (uint32_t)(*s >> 32);
 }
 
 int main(int argc, const char* argv[])
