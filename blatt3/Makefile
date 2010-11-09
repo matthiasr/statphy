@@ -1,4 +1,5 @@
 LDFLAGS=-lm
+CFLAGS=-O3
 
 all: aufg10
 
