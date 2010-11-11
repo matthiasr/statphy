@@ -32,7 +32,7 @@ static inline void usage(const char* progname)
 
 int main(int argc, const char* argv[])
 {
-    if (argc == 2 && (strcmp("-h",argv[0]) || strcmp("--help",argv[0])))
+    if (argc == 2 && (strcmp("-h",argv[1]) == 0 || strcmp("--help",argv[1]) == 0 ))
     {
         usage(argv[0]);
     }
