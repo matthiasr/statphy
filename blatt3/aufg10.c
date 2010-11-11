@@ -58,15 +58,15 @@ int main(int argc, const char* argv[])
         /* single values */
         sprintf(fname, "%s-0001.testdat",prefix);
         f = fopen(fname,"w");
-        for (k=0;k<INTERVALS;k++) count[k] = 0;
+        for (j=0;j<INTERVALS;j++) count[j] = 0;
         for (i=0;i<100000;i++)
         {
             n = lcg_random(&s);
             count[n*(long long)INTERVALS/UINT32_MAX]++;
         }
-        for (k=0;k<INTERVALS;k++)
+        for (j=0;j<INTERVALS;j++)
         {
-            fprintf(f,"%04d %d\n",k,count[k]);
+            fprintf(f,"%04d %d\n",j,count[j]);
         }
         fclose(f);
 
@@ -80,7 +80,6 @@ int main(int argc, const char* argv[])
             for (j=0;j<INTERVALS;j++) count[j] = 0;
             for (i=0;i<10000;i++)
             {
-                /* printf("."); fflush(stdout); */
                 n = 0;
                 for (j=0;j<N[k];j++)
                     n += lcg_random(&s);
