@@ -56,6 +56,8 @@ int main(int argc, const char* argv[])
                 count = 1;
         }
 
+        if (count < 1) usage(argv[0]);
+
         for (i=0;i<count;i++)
 #ifdef DEBUG
             printf("%08x\n",lcg_random(&s));
