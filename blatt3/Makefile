@@ -1,10 +1,16 @@
 LDFLAGS=-lm
 CFLAGS=-O3
 
-all: aufg10
+all: aufg10 test-meta.txt
 
 aufg10: aufg10.c
 
-.PHONY: clean
+test-meta.txt: aufg10
+	./aufg10 -t > $@
+
+.PHONY: clean distclean
 clean:
 	rm -f aufg10
+
+distclean: clean
+	rm -f *.testdat test-meta.txt

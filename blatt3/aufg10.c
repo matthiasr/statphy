@@ -49,47 +49,64 @@ int main(int argc, const char* argv[])
         FILE *f;
 #define INTERVALS 1000
         unsigned int count[INTERVALS];
-        const long double d = 1.L/INTERVALS;
+        long long numbers[100000];
+        long double mean, variance;
 
         lcgstate s = time(NULL);
-        long long n;
         unsigned int k,i,j;
 
         /* single values */
+        for (j=0;j<INTERVALS;j++) count[j] = 0;
+        mean = 0.;
+        variance = 0.;
+#define SAMPLES 100000
+        for (i=0;i<SAMPLES;i++)
+        {
+            numbers[i] = lcg_random(&s);
+            mean += (long double)numbers[i]/UINT32_MAX;
+            count[numbers[i]*(long long)INTERVALS/UINT32_MAX]++;
+        }
+        mean /= SAMPLES;
+        for (i=0;i<SAMPLES;i++)
+            variance += ((long double)numbers[i]/UINT32_MAX-mean)*((long double)numbers[i]/UINT32_MAX-mean);
+        variance /= SAMPLES;
+        printf("N = %d, Mean = %Lg, Variance = %Lg\n", 1, mean, variance);
+
         sprintf(fname, "%s-0001.testdat",prefix);
         f = fopen(fname,"w");
-        for (j=0;j<INTERVALS;j++) count[j] = 0;
-        for (i=0;i<100000;i++)
-        {
-            n = lcg_random(&s);
-            count[n*(long long)INTERVALS/UINT32_MAX]++;
-        }
         for (j=0;j<INTERVALS;j++)
-        {
             fprintf(f,"%04d %d\n",j,count[j]);
-        }
         fclose(f);
 
         /* averages */
 #define NS 3
+#undef SAMPLES
+#define SAMPLES 10000
         int N[NS] = {10,100,1000};
         for (k=0;k<NS;k++)
         {
+            for (j=0;j<INTERVALS;j++) count[j] = 0;
+            mean = 0.;
+            variance = 0.;
+            for (i=0;i<SAMPLES;i++)
+            {
+                numbers[i] = 0;
+                for (j=0;j<N[k];j++)
+                    numbers[i] += lcg_random(&s);
+                numbers[i] /= N[k]; /* normalization */
+                mean += (long double)numbers[i]/UINT32_MAX;
+                count[numbers[i]*(long long)INTERVALS/UINT32_MAX]++;
+            }
+            mean /= SAMPLES;
+            for (i=0;i<SAMPLES;i++)
+                variance += ((long double)numbers[i]/UINT32_MAX-mean)*((long double)numbers[i]/UINT32_MAX-mean);
+            variance /= SAMPLES;
+            printf("N = %d, Mean = %Lg, Variance = %Lg\n", N[k], mean, variance);
+
             sprintf(fname, "%s-%04d.testdat",prefix,N[k]);
             f = fopen(fname,"w");
-            for (j=0;j<INTERVALS;j++) count[j] = 0;
-            for (i=0;i<10000;i++)
-            {
-                n = 0;
-                for (j=0;j<N[k];j++)
-                    n += lcg_random(&s);
-                n /= N[k]; /* normalization */
-                count[n*(long long)INTERVALS/UINT32_MAX]++;
-            }
             for (j=0;j<INTERVALS;j++)
-            {
                 fprintf(f,"%04d %d\n",j,count[j]);
-            }
             fclose(f);
         }
 
