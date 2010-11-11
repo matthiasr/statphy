@@ -1,3 +1,5 @@
 .*.swp
 blatt2/aufg7
 blatt3/aufg10
+blatt3/*.testdat
+blatt3/test-meta.txt
