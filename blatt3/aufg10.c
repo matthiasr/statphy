@@ -139,6 +139,6 @@ int main(int argc, const char* argv[])
 #else
             printf("%.8f\n",lcg_random(&s) / exp2(32));
 #endif
-        exit(0);
     }
+    exit(0);
 }
