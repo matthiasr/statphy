@@ -20,31 +20,48 @@ uint32_t lcg_random(lcgstate* s)
     return (uint32_t)(*s >> 32);
 }
 
+/* Hilfetext anzeigen und Programm beenden. Kehrt nie zurück. */
+static inline void usage(const char* progname)
+{
+        fprintf(stderr,"Usage:\n\n");
+        fprintf(stderr,"Display <count> random numbers seeded with <seed>:\n\t%s [count [seed]]\n\n", \
+                progname);
+        fprintf(stderr, "Show this message:\n\t%s -h|--help\n", progname);
+        exit(0);
+}
+
 int main(int argc, const char* argv[])
 {
-    lcgstate s;
-    unsigned long i;
-    unsigned long count = 0;
-
-    switch(argc) {
-        case 3:
-            s = strtoll(argv[2],NULL,10);
-            count = strtol(argv[1],NULL,10);
-            break;
-        case 2:
-            count = strtol(argv[1],NULL,10);
-            s = time(NULL);
-            break;
-        default:
-            s = time(NULL);
-            count = 1;
+    if (argc == 2 && (strcmp("-h",argv[0]) || strcmp("--help",argv[0])))
+    {
+        usage(argv[0]);
     }
+    else
+    {
+        lcgstate s;
+        unsigned long i;
+        unsigned long count = 0;
 
-    for (i=0;i<count;i++)
+        switch(argc) {
+            case 3:
+                s = strtoll(argv[2],NULL,10);
+                count = strtol(argv[1],NULL,10);
+                break;
+            case 2:
+                count = strtol(argv[1],NULL,10);
+                s = time(NULL);
+                break;
+            default:
+                s = time(NULL);
+                count = 1;
+        }
+
+        for (i=0;i<count;i++)
 #ifdef DEBUG
-        printf("%08x\n",lcg_random(&s));
+            printf("%08x\n",lcg_random(&s));
 #else
-        printf("%.8f\n",lcg_random(&s) / exp2(32));
+            printf("%.8f\n",lcg_random(&s) / exp2(32));
 #endif
-    exit(0);
+        exit(0);
+    }
 }
