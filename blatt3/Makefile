@@ -2,14 +2,14 @@ LDFLAGS=-lm
 CFLAGS=-O3
 GNUPLOT=gnuplot
 
-all: aufg10 test-meta.txt test.pdf
+all: aufg10 aufg10-meta.txt aufg10.pdf
 
 aufg10: aufg10.c
 
-test-meta.txt: aufg10
-	./aufg10 -t > $@
+aufg10-meta.txt: aufg10
+	./aufg10 -t aufg10 > $@
 
-test.pdf: test.gnuplot test-meta.txt
+aufg10.pdf: aufg10.gnuplot aufg10-meta.txt
 	$(GNUPLOT) $<
 
 .PHONY: clean distclean
@@ -17,4 +17,4 @@ clean:
 	rm -f aufg10
 
 distclean: clean
-	rm -f *.testdat test-meta.txt test.pdf
+	rm -f *.testdat aufg10-meta.txt aufg10.pdf
