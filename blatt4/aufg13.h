@@ -53,4 +53,27 @@ static void sort(float* feld, int N)
     return;
 }
 
+float integrieren(float (*integrand)(float), float von, float bis, int N)
+{
+    int i;
+    float sum = 0.;
+
+    const float delta = (bis - von) / N;
+
+    /* Integrationsschleife, mit OpenMP parallelisierbar */
+#pragma omp parallel for default(shared) private(i) reduction(+:sum)
+    for(i=0;i<N;i++)
+    {
+#ifndef TRAPEZ
+        /* Standard-Berechnung über Rechtecke */
+        sum = sum + (delta * integrand(von + i*delta));
+#else
+        /* Trapez-Methode. Genauer, aber langsamer */
+        sum = sum + (0.5 * delta * (integrand(von + i*delta) + integrand(von + (i-1)*delta)));
+#endif
+    }
+
+    return sum;
+}
+
 #endif
