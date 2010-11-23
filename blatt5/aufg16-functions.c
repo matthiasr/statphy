@@ -8,7 +8,6 @@
  * mit der Wahrscheinlichkeit p mit 1, (1-p) mit 0 */
 void fill_array(int* f, const int size, const float p)
 {
-    srandom(time(NULL));
     int i;
     for(i=0; i<size*size; i++)
     {
