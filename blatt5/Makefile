@@ -1,6 +1,8 @@
-all: aufg16
+all: aufg16-test aufg16
 
-aufg16: aufg16.c
+aufg16-test: aufg16-test.o aufg16-functions.o
+
+aufg16: aufg16-main.o aufg16-functions.o
 
 
 .PHONY: clean distclean
