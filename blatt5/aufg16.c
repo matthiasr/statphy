@@ -23,14 +23,16 @@ void fill_array(int* f, int size, float p)
     }
 }
 
-int find_path_from_pos(const int* f, const int size, \
+int find_path_from_pos(const int* f, int* visited, const int size, \
         const int xpos, const int ypos, const int xfrom, const int yfrom)
 {
 #ifdef DEBUG
     printf("%d %d\n", xpos, ypos);
 #endif
     if( xpos == size-1 ) return 1; /* am Ziel */
-    if( f[xpos*size+ypos] == 0 ) return 0; /* kein Pfad hier */
+    if( f[xpos*size+ypos] == 0 || visited[xpos*size+ypos] != 0 ) return 0; /* kein Pfad hier */
+
+    visited[xpos*size+ypos] = 1; /* loop prevention */
 
     int xdelta, ydelta, ergebnis=0;
     for( xdelta=1; xdelta>=-1; xdelta--)
@@ -42,7 +44,7 @@ int find_path_from_pos(const int* f, const int size, \
             if ( xpos+xdelta<0 || ypos+ydelta >= size || ypos+ydelta<0 )
                 return 0; /* out of bounds - kein Pfad hier */
 
-            ergebnis = find_path_from_pos(f, size, \
+            ergebnis = find_path_from_pos(f, visited, size, \
                     xpos+xdelta, ypos+ydelta, xfrom, yfrom);
             if(ergebnis)
                 return ergebnis;
@@ -55,16 +57,21 @@ int has_path(const int* f, const int size)
 {
     int ystart;
     int ergebnis;
+    int visited[size][size];
+
+    int i,j;
+    for(i=0;i<size;i++)
+        for(j=0;j<size;j++)
+            visited[i][j] = 0;
 
     for(ystart=0;ystart<size;ystart++)
     {
-        ergebnis = find_path_from_pos(f,size, 0, ystart, -1, -1);
+        ergebnis = find_path_from_pos(f, (int*)visited, size, 0, ystart, -1, -1);
         if(ergebnis)
             return 1; /* Pfad gefunden */
     }
     return 0; /* kein Pfad */
 }
-
 
 int main(int argc, char** argv)
 {
