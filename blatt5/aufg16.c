@@ -10,6 +10,10 @@
 #define MAX_SIZE 1000
 #endif
 
+#ifndef P_STEP
+#define P_STEP 0.1
+#endif
+
 int main(int argc, char** argv)
 {
     float p;
@@ -21,7 +25,7 @@ int main(int argc, char** argv)
     for(size=10; size <= MAX_SIZE; size*=10)
     {
         f = malloc(size*size*sizeof(int));
-        for(p=0.0; p<1.0; p+=0.1)
+        for(p=0.0; p<1.0; p+=P_STEP)
         {
             paths_found = 0;
             for(i=0; i<N_STAT; i++)
