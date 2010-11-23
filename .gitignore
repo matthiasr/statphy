@@ -5,3 +5,7 @@ blatt3/*.testdat
 blatt3/aufg10-meta.txt
 blatt3/aufg10.pdf
 blatt4/aufg13
+*.o
+blatt5/aufg16-test
+blatt5/aufg16
+.DS_Store
