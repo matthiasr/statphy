@@ -1,4 +1,5 @@
 CFLAGS=-O3
+CPPFLAGS=-DP_STEP=0.01
 
 all: aufg16-test aufg16
 

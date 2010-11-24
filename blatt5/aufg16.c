@@ -16,7 +16,7 @@
 
 int main(int argc, char** argv)
 {
-    float p;
+    int p;
     int i;
     int size;
     int* f;
@@ -25,16 +25,16 @@ int main(int argc, char** argv)
     for(size=10; size <= MAX_SIZE; size*=10)
     {
         f = malloc(size*size*sizeof(int));
-        for(p=0.0; p<1.0; p+=P_STEP)
+        for(p=0; p<1.0/P_STEP; p++)
         {
             paths_found = 0;
             for(i=0; i<N_STAT; i++)
             {
-                fill_array(f, size, p);
+                fill_array(f, size, p*P_STEP);
                 paths_found += has_path(f, size);
             }
 
-            printf("%f %g %d\n", p, (float)paths_found/N_STAT, paths_found);
+            printf("%f %g %d\n", p*P_STEP, (float)paths_found/N_STAT, paths_found);
         }
         printf("\n");
         free(f);
