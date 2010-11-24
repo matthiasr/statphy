@@ -1,3 +1,5 @@
+CFLAGS=-O3
+
 all: aufg16-test aufg16
 
 aufg16-test: aufg16-test.o aufg16-functions.o
