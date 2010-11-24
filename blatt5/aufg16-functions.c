@@ -56,18 +56,23 @@ int has_path(const int* f, const int size)
 {
     int ystart;
     int ergebnis;
-    int visited[size][size];
+    int* visited;
 
-    int i,j;
-    for(i=0;i<size;i++)
-        for(j=0;j<size;j++)
-            visited[i][j] = 0;
+    visited = malloc(size*size*sizeof(int));
+
+    int i;
+    for(i=0;i<size*size;i++)
+        visited[i] = 0;
 
     for(ystart=0;ystart<size;ystart++)
     {
         ergebnis = find_path_from_pos(f, (int*)visited, size, 0, ystart, -1, -1);
         if(ergebnis)
+        {
+            free(visited);
             return 1; /* Pfad gefunden */
+        }
     }
+    free(visited);
     return 0; /* kein Pfad */
 }
