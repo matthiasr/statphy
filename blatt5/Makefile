@@ -15,6 +15,8 @@ aufg16-hiq.txt: aufg16
 aufg16-vhq.txt: aufg16
 	./aufg16 0.001 > $@
 
+.PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
+
 
 .PHONY: clean distclean
 
