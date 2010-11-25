@@ -4,6 +4,8 @@ all: aufg16-test aufg16
 
 data: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 
+plots: aufg16.pdf aufg16-hiq.pdf aufg16-vhq.pdf
+
 aufg16-test: aufg16-test.o aufg16-functions.o
 
 aufg16: aufg16.o aufg16-functions.o
@@ -16,6 +18,9 @@ aufg16-hiq.txt: aufg16
 
 aufg16-vhq.txt: aufg16
 	./aufg16 0.001 > $@
+
+%.pdf: %.txt
+	./aufg16-plot.sh $< $@
 
 .PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 
