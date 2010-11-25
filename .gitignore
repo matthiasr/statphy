@@ -8,4 +8,5 @@ blatt4/aufg13
 *.o
 blatt5/aufg16-test
 blatt5/aufg16
+blatt5/aufg16*.txt
 .DS_Store
