@@ -26,4 +26,4 @@ clean:
 	rm -f aufg16 aufg16-test *.o
 
 distclean: clean
-	rm -f aufg16.txt
+	rm -f aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
