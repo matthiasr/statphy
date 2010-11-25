@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 
             printf("%f %g %d\n", p*p_step, (float)paths_found/N_STAT, paths_found);
         }
-        printf("\n");
+        printf("\n\n");
         free(f);
     }
 
