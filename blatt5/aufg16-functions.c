@@ -37,9 +37,6 @@ int find_path_from_pos(const int* f, int* visited, const int size, \
     for( xdelta=1; xdelta>=-1; xdelta--)
         for( ydelta=1; ydelta>=-1; ydelta--)
         {
-            if ( (xpos+xdelta==xfrom && ypos+ydelta==yfrom) \
-                    || (xdelta==0 && ydelta==0) )
-                continue; /* nicht zurückgehen, nicht auf der Stelle treten */
             if ( xpos+xdelta<0 || ypos+ydelta >= size || ypos+ydelta<0 )
                 return 0; /* out of bounds - kein Pfad hier */
 
