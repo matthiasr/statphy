@@ -20,6 +20,7 @@ fit f_100(x) 'aufg16-vhq.txt' index 1 using 1:2 via x0_100,s_100
 fit f_1000(x) 'aufg16-vhq.txt' index 2 using 1:2 via x0_1000,s_1000
 
 set samples 1000
+set key right bottom
 
 plot '$1' index 0 with steps title "N=10", \
      f_10(x) with lines title "Cumulative Gauss for N=10", \
