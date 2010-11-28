@@ -35,3 +35,4 @@ clean:
 distclean: clean
 	rm -f aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 	rm -f aufg16.pdf aufg16-hiq.pdf aufg16-vhq.pdf
+	rm -f aufg16.txt.log aufg16-hiq.txt.log aufg16-vhq.txt.log
