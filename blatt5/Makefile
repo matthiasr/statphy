@@ -22,7 +22,7 @@ aufg16-vhq.txt: aufg16
 	./aufg16 0.001 > $@
 
 %.pdf: %.txt
-	./aufg16-plot.sh $< $@
+	./aufg16-plot.sh $< $@ 2> /dev/null
 
 .PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 
