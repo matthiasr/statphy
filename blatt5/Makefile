@@ -22,7 +22,7 @@ aufg16-vhq.txt: aufg16
 	./aufg16 0.001 > $@
 
 %.pdf: %.txt
-	./aufg16-plot.sh $< $@ 2> /dev/null
+	./aufg16-plot.sh $< $@ 2> $@.log
 
 .PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 
@@ -35,4 +35,4 @@ clean:
 distclean: clean
 	rm -f aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 	rm -f aufg16.pdf aufg16-hiq.pdf aufg16-vhq.pdf
-	rm -f aufg16.txt.log aufg16-hiq.txt.log aufg16-vhq.txt.log
+	rm -f aufg16.pdf.log aufg16-hiq.pdf.log aufg16-vhq.pdf.log
