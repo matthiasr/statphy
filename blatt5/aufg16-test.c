@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "aufg16.h"
 
 void print_array(int* f, int size)
@@ -27,9 +28,10 @@ void print_array(int* f, int size)
 
 int main(int argc, char** argv)
 {
-    int size = 10;
-    int f[10][10];
-    float p = 0.5;
+    int size = atoi(argv[1]);
+    int* f;
+    f = malloc(size*size*sizeof(int));
+    float p = strtof(argv[2],NULL);
 
     fill_array((int*)f, size, p);
 
