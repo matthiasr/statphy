@@ -40,6 +40,12 @@ int main(int argc, char** argv)
     for(size=10; size <= MAX_SIZE; size*=10)
     {
         f = malloc(size*size*sizeof(int));
+        if(f == NULL)
+        {
+            fprintf(stderr, "Memory Error");
+            exit(1);
+        }
+
         for(p=0; p<1.0/p_step; p++)
         {
             paths_found = 0;

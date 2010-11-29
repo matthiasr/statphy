@@ -73,6 +73,12 @@ int has_path(const int* f, const int size)
 
     visited = malloc(size*size*sizeof(int));
 
+    if(visited == NULL)
+    {
+        fprintf(stderr, "Memory Error");
+        exit(1);
+    }
+
     int i;
     for(i=0;i<size*size;i++)
         visited[i] = 0;
