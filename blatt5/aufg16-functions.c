@@ -1,8 +1,24 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 #include "aufg16.h"
 
+#ifndef USE_STDLIB_RANDOM
+#define MAX_RANDOM UINT32_MAX
+#define RANDOM lcg_random
+#else
 #define MAX_RANDOM 2147483647
+#define RANDOM random
+#endif
+
+uint32_t lcg_random(void)
+{
+    static uint64_t s = 294857623; /* completely random seed: chosen by fair dice roll */
+    /* Parameters from http://en.wikipedia.org/wiki/Linear_congruential_generator#LCGs_in_common_use */
+    s = 6364136223846793005LLU * s + 1442695040888963407LLU; /* implicit (mod) 2^64 */
+    return (uint32_t)(s >> 32);
+}
+
 
 /* füllt Array der Größe size*size (int[size][size])
  * mit der Wahrscheinlichkeit p mit 1, (1-p) mit 0 */
@@ -11,7 +27,7 @@ void fill_array(int* f, const int size, const float p)
     int i;
     for(i=0; i<size*size; i++)
     {
-        if(random() < p*MAX_RANDOM)
+        if(RANDOM() < p*MAX_RANDOM)
         {
             f[i] = 1;
         }
