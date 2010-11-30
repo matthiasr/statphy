@@ -2,7 +2,7 @@ CFLAGS=-O3
 
 all: bin data plots
 
-bin: aufg16-test aufg16
+bin: aufg16-test aufg16 aufg16-periodic
 
 data: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 
@@ -11,6 +11,8 @@ plots: aufg16.pdf aufg16-hiq.pdf aufg16-vhq.pdf
 aufg16-test: aufg16-test.o aufg16-functions.o
 
 aufg16: aufg16.o aufg16-functions.o
+
+aufg16-periodic: aufg16.o aufg16-periodic.o
 
 aufg16.txt: aufg16
 	./aufg16 > $@

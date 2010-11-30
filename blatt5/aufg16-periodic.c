@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
 #include "aufg16.h"
 
 #ifndef USE_STDLIB_RANDOM
@@ -41,6 +42,7 @@ void fill_array(int* f, const int size, const float p)
 int find_path_from_pos(const int* f, int* visited, const int size, \
         const int xpos, const int ypos, const int xfrom, const int yfrom)
 {
+    assert(0<=xpos && xpos<size && 0<=ypos && ypos<=size);
 #ifdef DEBUG
     printf("%d %d\n", xpos, ypos);
 #endif
