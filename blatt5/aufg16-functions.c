@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
 #include "aufg16.h"
 
 #ifndef USE_STDLIB_RANDOM
@@ -39,8 +40,9 @@ void fill_array(int* f, const int size, const float p)
 }
 
 int find_path_from_pos(const int* f, int* visited, const int size, \
-        const int xpos, const int ypos, const int xfrom, const int yfrom)
+        const int xpos, const int ypos)
 {
+    assert(0<=xpos && xpos<size && 0<=ypos && ypos<size);
 #ifdef DEBUG
     printf("%d %d\n", xpos, ypos);
 #endif
@@ -49,26 +51,26 @@ int find_path_from_pos(const int* f, int* visited, const int size, \
 
     visited[xpos*size+ypos] = 1; /* loop prevention */
 
-    int xdelta, ydelta, ergebnis=0;
+    int xdelta, ydelta;
     for( xdelta=1; xdelta>=-1; xdelta--)
+    {
         for( ydelta=1; ydelta>=-1; ydelta--)
         {
             if ( xpos+xdelta<0 || ypos+ydelta >= size || ypos+ydelta<0 )
                 return 0; /* out of bounds - kein Pfad hier */
 
-            ergebnis = find_path_from_pos(f, visited, size, \
-                    xpos+xdelta, ypos+ydelta, xfrom, yfrom);
-            if(ergebnis)
-                return ergebnis;
+            if( find_path_from_pos(f, visited, size, \
+                        xpos+xdelta, ypos+ydelta) )
+                    return 1; /* Pfad gefunden */
         }
-    return 0;
+    }
+    return 0; /* kein Pfad */
 }
 
 /* Sucht size*size-Feld f nach einem Pfad von links nach rechts ab. */
 int has_path(const int* f, const int size)
 {
     int ystart;
-    int ergebnis;
     int* visited;
 
     visited = malloc(size*size*sizeof(int));
@@ -85,8 +87,7 @@ int has_path(const int* f, const int size)
 
     for(ystart=0;ystart<size;ystart++)
     {
-        ergebnis = find_path_from_pos(f, (int*)visited, size, 0, ystart, -1, -1);
-        if(ergebnis)
+        if( find_path_from_pos(f, (int*)visited, size, 0, ystart) )
         {
             free(visited);
             return 1; /* Pfad gefunden */
