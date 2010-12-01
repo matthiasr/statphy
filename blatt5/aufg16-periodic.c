@@ -12,6 +12,13 @@
 #define RANDOM random
 #endif
 
+/* begrenzt, über wie viele periodische Wiederholungen
+ * in x-Richtung gesucht wird, um die Rekursionstiefe einzudämmen
+ */
+#ifndef MAX_XDEPTH
+#define MAX_XDEPTH 3
+#endif
+
 uint32_t lcg_random(void)
 {
     static uint64_t s = 294857623; /* completely random seed: chosen by fair dice roll */
@@ -79,7 +86,7 @@ int find_path_from_pos(const int* f, int* visited, const int size, \
     printf("%d %d\n", xpos, ypos);
 #endif
     if( xpos == size-1 && xdepth>=0 && (ypos==ystart || ypos-ystart == 1 || ystart-ypos == 1) ) return 1; /* am Ziel */
-    if( f[xpos*size+ypos] == 0 || visited[xpos*size+ypos] != 0 || xdepth < 0) return 0; /* kein Pfad hier */
+    if( f[xpos*size+ypos] == 0 || visited[xpos*size+ypos] != 0 || xdepth < 0 || xdepth > MAX_XDEPTH) return 0; /* kein Pfad hier */
 
     visited[xpos*size+ypos] = 1; /* loop prevention */
 
