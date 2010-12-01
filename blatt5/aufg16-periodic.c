@@ -83,23 +83,21 @@ int find_path_from_pos(const int* f, int* visited, const int size, \
 
     visited[xpos*size+ypos] = 1; /* loop prevention */
 
-    int xdelta, ydelta, ergebnis=0;
+    int xdelta, ydelta;
     for( xdelta=1; xdelta>=-1; xdelta--)
         for( ydelta=1; ydelta>=-1; ydelta--)
         {
-            ergebnis = find_path_from_pos(f, visited, size, \
-                    wrap_coord(xpos+xdelta,size), wrap_coord(ypos+ydelta,size), ystart, wrap_depth(xpos+xdelta,size,xdepth));
-            if(ergebnis)
-                return ergebnis;
+            if( find_path_from_pos(f, visited, size, \
+                    wrap_coord(xpos+xdelta,size), wrap_coord(ypos+ydelta,size), ystart, wrap_depth(xpos+xdelta,size,xdepth)) )
+                return 1; /* Pfad gefunden */
         }
-    return 0;
+    return 0; /* kein Pfad */
 }
 
 /* Sucht size*size-Feld f nach einem Pfad von links nach rechts ab. */
 int has_path(const int* f, const int size)
 {
     int ystart;
-    int ergebnis;
     int* visited;
 
     visited = malloc(size*size*sizeof(int));
@@ -116,8 +114,7 @@ int has_path(const int* f, const int size)
     {
         for(i=0;i<size*size;i++)
             visited[i] = 0;
-        ergebnis = find_path_from_pos(f, visited, size, 0, ystart, ystart, 0);
-        if(ergebnis)
+        if ( find_path_from_pos(f, visited, size, 0, ystart, ystart, 0) )
         {
             free(visited);
             return 1; /* Pfad gefunden */
