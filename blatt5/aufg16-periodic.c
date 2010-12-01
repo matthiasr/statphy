@@ -85,12 +85,24 @@ int find_path_from_pos(const int* f, int* visited, const int size, \
 
     int xdelta, ydelta;
     for( xdelta=1; xdelta>=-1; xdelta--)
-        for( ydelta=1; ydelta>=-1; ydelta--)
+    {
+        if(ypos>ystart)
         {
-            if( find_path_from_pos(f, visited, size, \
-                    wrap_coord(xpos+xdelta,size), wrap_coord(ypos+ydelta,size), ystart, wrap_depth(xpos+xdelta,size,xdepth)) )
-                return 1; /* Pfad gefunden */
+            for( ydelta=1; ydelta>=-1; ydelta--)
+                if( find_path_from_pos(f, visited, size, \
+                        wrap_coord(xpos+xdelta,size), wrap_coord(ypos+ydelta,size), \
+                        ystart, wrap_depth(xpos+xdelta,size,xdepth)) )
+                    return 1; /* Pfad gefunden */
         }
+        else
+        {
+            for( ydelta=-1; ydelta<=1; ydelta++)
+                if( find_path_from_pos(f, visited, size, \
+                        wrap_coord(xpos+xdelta,size), wrap_coord(ypos+ydelta,size), \
+                        ystart, wrap_depth(xpos+xdelta,size,xdepth)) )
+                    return 1; /* Pfad gefunden */
+        }
+    }
     return 0; /* kein Pfad */
 }
 
