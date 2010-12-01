@@ -39,6 +39,38 @@ void fill_array(int* f, const int size, const float p)
     }
 }
 
+static inline int wrap_coord(const int x, const int size)
+{
+    if(x<0)
+    {
+        return size+x;
+    }
+    else if(x>=size)
+    {
+        return x-size;
+    }
+    else
+    {
+        return x;
+    }
+}
+
+static inline int wrap_depth(const int x, const int size, const int depth)
+{
+    if(x<0)
+    {
+        return depth-1;
+    }
+    else if(x>=size)
+    {
+        return depth+1;
+    }
+    else
+    {
+        return depth;
+    }
+}
+
 int find_path_from_pos(const int* f, int* visited, const int size, \
         const int xpos, const int ypos, const int ystart, const int xdepth)
 {
@@ -56,7 +88,7 @@ int find_path_from_pos(const int* f, int* visited, const int size, \
         for( ydelta=1; ydelta>=-1; ydelta--)
         {
             ergebnis = find_path_from_pos(f, visited, size, \
-                    (xpos+xdelta)%size, (ypos+ydelta)%size, ystart, ((xpos+xdelta)%size==0)?xdepth+xdelta:xdepth);
+                    wrap_coord(xpos+xdelta,size), wrap_coord(ypos+ydelta,size), ystart, wrap_depth(xpos+xdelta,size,xdepth));
             if(ergebnis)
                 return ergebnis;
         }
