@@ -35,7 +35,7 @@ aufg16-periodic-vhq.txt: aufg16-periodic
 %.pdf: %.txt
 	./aufg16-plot.sh $< $@ 2> $@.log
 
-.PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
+.PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt aufg16-periodic.txt aufg16-periodic-hiq.txt aufg16-periodic-vhq.txt
 
 
 .PHONY: clean distclean
