@@ -10,7 +10,7 @@ set ylabel 'relative Häufigkeit'
 set xrange [0:1]
 
 # cumulative gaussian distribution
-set fit logfile '/dev/null'
+set fit logfile '`basename $2 .pdf`.log'
 f_10(x)=(1+erf((x-x0_10)/(sqrt(2)*s_10)))/2
 f_100(x)=(1+erf((x-x0_100)/(sqrt(2)*s_100)))/2
 f_1000(x)=(1+erf((x-x0_1000)/(sqrt(2)*s_1000)))/2

@@ -33,7 +33,8 @@ aufg16-periodic-vhq.txt: aufg16-periodic
 	./aufg16-periodic 0.001 > $@
 
 %.pdf: %.txt
-	./aufg16-plot.sh $< $@ 2> $@.log
+	rm -f `basename $@ .pdf`.log
+	./aufg16-plot.sh $< $@ 2> /dev/null
 
 .PRECIOUS: aufg16.txt aufg16-hiq.txt aufg16-vhq.txt aufg16-periodic.txt aufg16-periodic-hiq.txt aufg16-periodic-vhq.txt
 
@@ -46,7 +47,7 @@ clean:
 distclean: clean
 	rm -f aufg16.txt aufg16-hiq.txt aufg16-vhq.txt
 	rm -f aufg16.pdf aufg16-hiq.pdf aufg16-vhq.pdf
-	rm -f aufg16.pdf.log aufg16-hiq.pdf.log aufg16-vhq.pdf.log
+	rm -f aufg16.log aufg16-hiq.log aufg16-vhq.log
 	rm -f aufg16-periodic.txt aufg16-periodic-hiq.txt aufg16-periodic-vhq.txt
 	rm -f aufg16-periodic.pdf aufg16-periodic-hiq.pdf aufg16-periodic-vhq.pdf
 	rm -f aufg16-periodic.pdf.log aufg16-periodic-hiq.pdf.log aufg16-periodic-vhq.pdf.log
