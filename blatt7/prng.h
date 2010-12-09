@@ -2,8 +2,8 @@
 #define PRNG_H_INCLUDED
 #include <stdint.h>
 
-#define PRNG_MAX UINT32_MAX
-typedef uint32_t prng_t;
+#define PRNG_MAX 1
+typedef double prng_t;
 typedef uint64_t prng_state_t;
 
 /* return a uniformly distributed random number from [0,PRNG_MAX) */

@@ -9,7 +9,7 @@ __thread static prng_state_t s = 1;
 prng_t prng(void)
 {
      s = 6364136223846793005LLU * s + 1442695040888963407LLU; /* implicit (mod) 2^64 */
-    return (prng_t)(s >> 32);     
+    return (prng_t)(s >> 32)/UINT32_MAX;
 }
 
 prng_t prng_pdf(prng_t (*pdf)(prng_t))
