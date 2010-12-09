@@ -12,13 +12,13 @@ prng_t prng(void)
     return (prng_t)(s >> 32)/UINT32_MAX;
 }
 
-prng_t prng_pdf(prng_t (*pdf)(prng_t))
+prng_t prng_pdf(prng_t (*pdf)(prng_t), prng_t pdf_max)
 {
     prng_t x,y;
     do
     {
         x = prng();
-        y = prng();
+        y = prng()*pdf_max;
     } while (y > pdf(x));
     return x;
 }

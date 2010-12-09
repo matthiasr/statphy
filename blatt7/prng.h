@@ -11,9 +11,10 @@ prng_t prng(void);
 
 /* return a random number from [0,PRNG_MAX)
  * distributed according to the PDF.
- * PDF must map [0,PRNG_MAX) to [0,PRNG_MAX)
+ * PDF must map [0,PRNG_MAX) to [0,x) where x<=pdf_max
+ * excessively large choice of pdf_max will result in low performance
  */
-prng_t prng_pdf(prng_t (*pdf)(prng_t));
+prng_t prng_pdf(prng_t (*pdf)(prng_t), prng_t pdf_max);
 
 /* return the current internal state
  * state is thread-local if _THREAD_SAFE
