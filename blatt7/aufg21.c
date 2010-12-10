@@ -1,6 +1,7 @@
 #include "prng.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
 
 #define N_TRIES 100000
 
@@ -21,8 +22,9 @@ int main(int argc, char** argv)
     long double weighted_hits = 0;
     prng_t x,y;
 
-
-    prng_setstate(time(NULL));
+    struct timeval t;
+    gettimeofday(&t,NULL);
+    prng_setstate(t.tv_usec+t.tv_sec*1000000);
 
     for(i=0;i<N_TRIES;i++)
     {
