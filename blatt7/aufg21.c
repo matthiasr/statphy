@@ -31,7 +31,7 @@ int main(int argc, char** argv)
         if(x*x + y*y < 1)
             hits++;
     }
-    printf("Gleichverteilt: %lf\n", (double)4.*hits/N_TRIES);
+    printf("Uniform sampling: %lf\n", (double)4.*hits/N_TRIES);
 
     for(i=0;i<N_TRIES;i++)
     {
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
         if(x*x+y*y<1)
             weighted_hits += 1/(rho1(x)*rho2(y));
     }
-    printf("Importance Sampling: %Lf\n", 4.*weighted_hits/N_TRIES);
+    printf("Importance sampling: %Lf\n", 4.*weighted_hits/N_TRIES);
 
     exit(0);
 }
