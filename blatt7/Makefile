@@ -1,3 +1,5 @@
+CFLAGS=-O3
+
 all: aufg21 prng-test
 
 aufg21: aufg21.o prng.o
