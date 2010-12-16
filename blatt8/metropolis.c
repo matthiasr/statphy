@@ -36,7 +36,6 @@ static inline double p_accept(double deltaH)
 void metropolis_evolve_state(const size_t N, state_t* state,\
         double (*Hamiltonian)(const size_t N, const state_t* state))
 {
-    const double H_old = Hamiltonian(N, state);
     size_t i;
 
     /* allocate tempstate if necessary */
@@ -51,6 +50,6 @@ void metropolis_evolve_state(const size_t N, state_t* state,\
     for(i=0;i<N;i++)
         tempstate[i] = state[i] + METROPOLIS_DELTA*((double)2*prng()/PRNG_MAX-1);
 
-    if(prng() <= p_accept(Hamiltonian(N, state) - H_old))
+    if(prng() < p_accept(Hamiltonian(N, tempstate) - Hamiltonian(N, state)))
         copy_state(N, tempstate, state);
 }
