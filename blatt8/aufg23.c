@@ -91,16 +91,7 @@ int main(int argc, char** argv)
     }
 
     free(state);
-
-    /* correct local density for size of (DIM-1)-sphere */
-    for(i=1;i<BINS;i++)
-        density[i] = (double)rho[i] * pow(((double)2*BINS/SAMPLES) / (i*lambda), DIM-1);
-
     free(rho);
-
-    for(i=1;i<BINS;i++)
-        printf("%lf %lg\n", (double)i/(2*lambda), density[i]);
-
     free(density);
 
     exit(0);
