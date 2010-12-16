@@ -21,18 +21,18 @@ double H(size_t N, const state_t* state)
         temp = 0;
         for(j=0;j<DIM;j++)
             temp += state[DIM*i+j]*state[DIM*i+j];
-        if(temp > 0.25*(lambda-1)*(lambda-1)) return INFINITY;
+        if(temp > 0.25*(lambda-1)*(lambda-1)) return 1E6*(temp*temp*temp*temp*temp*temp); /* ~r^12 */
     }
 
     /* check whether any two discs overlap */
     for(i=0;i<N/DIM;i++)
     {
-        for(j=0;j<N/(2*DIM);j++)
+        for(j=0;j<i;j++)
         {
             temp = 0;
             for(k=0;k<DIM;k++)
                 temp += (state[DIM*i+k]-state[DIM*j+k])*(state[DIM*i+k]-state[DIM*j+k]);
-            if(temp < 1) return INFINITY;
+            if(temp < 1) return 1E6/(temp*temp*temp*temp*temp*temp); /* ~ r^(-12) */
         }
     }
 
