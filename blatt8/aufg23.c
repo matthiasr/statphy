@@ -47,9 +47,45 @@ double p_accept(size_t N, const state_t* oldstate, const state_t* state)
     return 1;
 }
 
+double p_accept_runin(size_t N, const state_t* oldstate, const state_t* newstate)
+{
+    /* always accept if newstate is valid */
+    if(p_accept(N,oldstate,newstate)) return 1;
+
+    /* drive towards a valid state */
+    double H_old = 0, H_new = 0;
+    double r_old, r_new;
+    size_t i,j,k;
+    for(i=0;i<N/DIM;i++)
+    {
+        r_old = r_new = 0;
+        for(k=0;k<DIM;k++)
+        {
+                r_new += newstate[DIM*i+k]*newstate[DIM*i+k];
+                r_old += oldstate[DIM*i+k]*oldstate[DIM*i+k];
+        }
+
+        H_new += r_new*r_new*r_new*r_new;
+        H_old += r_old*r_old*r_old*r_old;
+
+        for(j=0;j<i;j++)
+        {
+            r_old = r_new = 0;
+            for(k=0;k<DIM;k++)
+            {
+                r_new += ((newstate[DIM*i+k]-newstate[DIM*j+k])*(newstate[DIM*i+k]-newstate[DIM*j+k]));
+                r_old += ((oldstate[DIM*i+k]-oldstate[DIM*j+k])*(oldstate[DIM*i+k]-oldstate[DIM*j+k]));
+            }
+            H_new += 1/(r_new*r_new*r_new*r_new*r_new*r_new);
+            H_old += 1/(r_old*r_old*r_old*r_old*r_old*r_old);
+        }
+    }
+    return exp(-1E9*(H_new - H_old ));
+}
+
 void bin_density(const size_t N, const state_t* state, unsigned int rho[BINS])
 {
-    size_t i,j;
+    size_t i,j,k;
     double rr;
     for(i=0;i<N/DIM;i++)
     {
@@ -97,16 +133,19 @@ int main(int argc, char** argv)
             {
                 /* initial state */
                 for(i=0;i<N;i++)
-                        state[i] = 0.5*(lambda-1)*((double)2*prng()/PRNG_MAX-1);
+                    state[i] = 0.5*(lambda-1)*((double)2*prng()/PRNG_MAX-1);
+                do {
+                    metropolis_evolve_state(N,state, tempstate, p_accept_runin);
+                } while(p_accept(N,NULL,state) == 0);
 
                 /* burn in */
                 for(i=0;i<BURNIN;i++)
-                    metropolis_evolve_state(N, state, H);
+                    metropolis_evolve_state(N, state, tempstate, p_accept);
 
                 /* sampling */
                 for(i=0;i<SAMPLES;i++)
                 {
-                    metropolis_evolve_state(N, state, H);
+                    metropolis_evolve_state(N, state, tempstate, p_accept);
                     bin_density(N, state, rho);
                 }
             }
