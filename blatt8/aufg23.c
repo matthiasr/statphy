@@ -102,16 +102,41 @@ void bin_density(const size_t N, const state_t* state, unsigned int rho[BINS])
 
 }
 
+state_t state_checksum(size_t N, const state_t* state)
+{
+    state_t r = 0;
+    size_t i;
+    for(i=0;i<N;i++)
+        r += state[i];
+    return r;
+}
+
 /* returns 0 if no valid state could be found */
 int init_state(const size_t N, state_t* state, state_t* tempstate)
 {
-    int i;
+#ifndef MAX_NO_MOVEMENT
+#define MAX_NO_MOVEMENT 100
+#endif
+    int i, no_movement;
+    state_t check;
     /* initial state */
+    no_movement = 0;
     for(i=0;i<N;i++)
         state[i] = 0.5*(lambda-1)*((double)2*prng()/PRNG_MAX-1);
     do {
+        check = state_checksum(N,state);
         metropolis_evolve_state(N,state, tempstate, p_accept_runin);
-    } while(p_accept(N,NULL,state) == 0);
+        if(state_checksum(N,state) == check)
+        {
+            no_movement++;
+        }
+        else
+        {
+            no_movement = 0;
+        }
+    } while(p_accept(N,NULL,state) == 0 && no_movement < MAX_NO_MOVEMENT);
+
+    if(p_accept(N,NULL,state) == 0) return 0; /* no valid state reached? */
 
     /* burn in */
     for(i=0;i<BURNIN;i++)
