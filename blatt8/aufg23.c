@@ -19,7 +19,7 @@ static const double NS[N_NS] = {1, 3, 10, 100};
 
 static double lambda;
 
-double H(size_t N, const state_t* state)
+double p_accept(size_t N, const state_t* oldstate, const state_t* state)
 {
     size_t i,j,k;
     double temp;
@@ -29,7 +29,7 @@ double H(size_t N, const state_t* state)
         temp = 0;
         for(j=0;j<DIM;j++)
             temp += state[DIM*i+j]*state[DIM*i+j];
-        if(temp > 0.25*(lambda-1)*(lambda-1)) return 1E6*(temp*temp*temp*temp*temp*temp); /* ~r^12 */
+        if(temp >= 0.25*(lambda-1)*(lambda-1)) return 0;
     }
 
     /* check whether any two discs overlap */
@@ -40,11 +40,11 @@ double H(size_t N, const state_t* state)
             temp = 0;
             for(k=0;k<DIM;k++)
                 temp += (state[DIM*i+k]-state[DIM*j+k])*(state[DIM*i+k]-state[DIM*j+k]);
-            if(temp < 1) return 1E6/(temp*temp*temp*temp*temp*temp); /* ~ r^(-12) */
+            if(temp < 1) return 0;
         }
     }
 
-    return 0;
+    return 1;
 }
 
 void bin_density(const size_t N, const state_t* state, unsigned int rho[BINS])
@@ -70,12 +70,13 @@ int main(int argc, char** argv)
     size_t N;
     unsigned int* rho;  
     double* density;
-    state_t* state;
+    state_t *state, *tempstate;
 
     density = malloc(sizeof(double)*BINS);
     rho = malloc(sizeof(unsigned int)*BINS);
     state = malloc(sizeof(state_t)*MAX_NS*DIM);
-    assert(density!=NULL && rho!=NULL && state!=NULL);
+    tempstate = malloc(sizeof(state_t)*MAX_NS*DIM);
+    assert(density!=NULL && rho!=NULL && state!=NULL && tempstate!=0);
     for(j=0;j<N_NS;j++)
     {
         N = NS[j]*DIM;
