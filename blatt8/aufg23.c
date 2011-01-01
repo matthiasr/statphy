@@ -190,7 +190,7 @@ int main(int argc, char** argv)
                 }
             }
 
-            /* correct local density for size of (DIM-1)-sphere */
+            /* calculate real local density */
             for(i=1;i<BINS;i++)
                 density[i] = (double)rho[i] * pow(((double)2*BINS/( CHAINS*SAMPLES )) / (i*lambda), DIM-1);
 
