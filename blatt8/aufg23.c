@@ -102,6 +102,24 @@ void bin_density(const size_t N, const state_t* state, unsigned int rho[BINS])
 
 }
 
+/* returns 0 if no valid state could be found */
+int init_state(const size_t N, state_t* state, state_t* tempstate)
+{
+    int i;
+    /* initial state */
+    for(i=0;i<N;i++)
+        state[i] = 0.5*(lambda-1)*((double)2*prng()/PRNG_MAX-1);
+    do {
+        metropolis_evolve_state(N,state, tempstate, p_accept_runin);
+    } while(p_accept(N,NULL,state) == 0);
+
+    /* burn in */
+    for(i=0;i<BURNIN;i++)
+        metropolis_evolve_state(N, state, tempstate, p_accept);
+
+    return 1;
+}    
+
 int main(int argc, char** argv)
 {
     size_t i,j,k,l;
@@ -133,16 +151,7 @@ int main(int argc, char** argv)
 
             for(l=0;l<CHAINS;l++)
             {
-                /* initial state */
-                for(i=0;i<N;i++)
-                    state[i] = 0.5*(lambda-1)*((double)2*prng()/PRNG_MAX-1);
-                do {
-                    metropolis_evolve_state(N,state, tempstate, p_accept_runin);
-                } while(p_accept(N,NULL,state) == 0);
-
-                /* burn in */
-                for(i=0;i<BURNIN;i++)
-                    metropolis_evolve_state(N, state, tempstate, p_accept);
+                if(!init_state(N, state, tempstate)) continue;
 
                 /* sampling */
                 for(i=0;i<SAMPLES;i++)
