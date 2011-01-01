@@ -176,7 +176,11 @@ int main(int argc, char** argv)
 
             for(l=0;l<CHAINS;l++)
             {
-                if(!init_state(N, state, tempstate)) continue;
+                if(!init_state(N, state, tempstate))
+                {
+                    l--;
+                    continue;
+                }
 
                 /* sampling */
                 for(i=0;i<SAMPLES;i++)
