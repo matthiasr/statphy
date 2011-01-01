@@ -122,7 +122,7 @@ int main(int argc, char** argv)
         {
             lambda = LAMBDAS[k] * pow(N/DIM,1./DIM);
 
-            printf("# N = %d, lambda = %f\n", (int)NS[j], LAMBDAS[k]);
+            printf("# N = %d, lambda = %f\n", (int)NS[j], lambda);
             fflush(stdout);
 
             for(i=0;i<BINS;i++)
