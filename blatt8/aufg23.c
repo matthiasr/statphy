@@ -95,7 +95,9 @@ void bin_density(const size_t N, const state_t* state, unsigned int rho[BINS])
             rr += state[DIM*i+j]*state[DIM*i+j];
         }
         rr = sqrt(rr);
-        rho[lrint(2*BINS*rr/lambda)]++;
+        k = lrint(floor(2*BINS*rr/lambda));
+        assert(k>=0 && k<BINS);
+        rho[k]++;
     }
 
 }
