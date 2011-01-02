@@ -145,6 +145,53 @@ int init_state(const size_t N, state_t* state, state_t* tempstate)
     return 1;
 }    
 
+int init_state_static(const size_t N, state_t* state, state_t* tempstate)
+{
+    const state_t spacing = (lambda / (2*sqrt(2))) / (pow(N/DIM, 1./DIM)/2);
+    state_t pos[DIM];
+    size_t i;
+    for(i=0;i<DIM;i++)
+        pos[i] = 0;
+    size_t placed = 0;
+    size_t none_placed = 0;
+
+    /* fill with rectangular pattern */
+    do
+    {
+        for(i=0;i<DIM;i++)
+            state[placed*DIM+i] = pos[i];
+
+        /* advance current position */
+        pos[0] += spacing;
+        i = 0;
+        while(pos[i] > lambda/2)
+        {
+            pos[i] = -lambda/2;
+            i++;
+            if(i>=DIM) i = 0;
+            pos[i] += spacing;
+        }
+
+        /* check if configuration is valid */
+        if(p_accept(placed*DIM, NULL, state))
+        {
+            placed++;
+            none_placed = 0;
+        }
+        else
+        {
+            none_placed++;
+            if(none_placed > N) return 0;
+        }
+    } while(placed<N);
+
+    /* burn in */
+    for(i=0;i<BURNIN;i++)
+        metropolis_evolve_state(N, state, tempstate, p_accept);
+
+    return 1;
+}
+
 int main(int argc, char** argv)
 {
     size_t i,j,k,l;
@@ -176,9 +223,8 @@ int main(int argc, char** argv)
 
             for(l=0;l<CHAINS;l++)
             {
-                if(!init_state(N, state, tempstate))
+                if(!(init_state(N, state, tempstate) || init_state_static(N, state, tempstate)))
                 {
-                    l--;
                     continue;
                 }
 
