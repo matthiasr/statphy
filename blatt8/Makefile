@@ -1,4 +1,5 @@
 CPPFLAGS = -DMETROPOLIS_DELTA=0.01
+LDFLAGS = -lm
 
 all: aufg23
 
