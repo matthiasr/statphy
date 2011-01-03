@@ -2,11 +2,16 @@ CPPFLAGS = -DMETROPOLIS_DELTA=0.01
 LDFLAGS = -lm
 CFLAGS = -g
 
-all: bin data
+all: bin data plots
 
 bin: aufg23
 
 data: aufg23.txt
+
+plots: aufg23.pdf
+
+%.pdf: %.txt
+	./plot.sh $< $@
 
 aufg23: aufg23.o prng.o metropolis.o
 
@@ -27,4 +32,4 @@ clean:
 	rm -f *.o aufg23
 
 distclean: clean
-	rm -f aufg23.txt
+	rm -f aufg23.txt aufg23.pdf
