@@ -8,7 +8,7 @@
 #define DIM 2
 #define BINS 100
 #define BURNIN 100000
-#define SAMPLES 10000000
+#define SAMPLES 100000000
 #define CHAINS 10
 
 #define N_LAMBDAS 4
