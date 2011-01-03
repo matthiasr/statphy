@@ -241,7 +241,7 @@ int main(int argc, char** argv)
                 density[i] = (double)rho[i] * pow(((double)2*BINS/( CHAINS*SAMPLES )) / (i*lambda), DIM-1);
 
             for(i=1;i<BINS;i++)
-                printf("%lf %lf\n", (double)i*lambda/(2*BINS), density[i]);
+                printf("%lf %lf %u\n", (double)i*lambda/(2*BINS), density[i], rho[i]);
 
             printf("\n\n");
             fflush(stdout);
