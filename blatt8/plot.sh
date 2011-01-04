@@ -2,6 +2,7 @@
 
 gnuplot <<EOF
 set terminal pdf size 10,6
+set yrange [0:0.4]
 set output "$2"
 
 unset key
