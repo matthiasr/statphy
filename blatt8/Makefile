@@ -1,6 +1,6 @@
 CPPFLAGS = -DMETROPOLIS_DELTA=0.01
-LDFLAGS = -lm
-CFLAGS = -g
+LDFLAGS = -lm -O3
+CFLAGS = -g -O3
 
 all: bin data plots
 
