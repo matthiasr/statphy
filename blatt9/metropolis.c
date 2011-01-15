@@ -14,10 +14,18 @@ void metropolis_evolve_state(const size_t N, state_t* state, state_t* tempstate,
 {
     size_t i;
 
+    copy_state(N, state, tempstate);
     /* evolve state */
     for(i=0;i<N;i++)
+    {
         tempstate[i] = state[i] + METROPOLIS_DELTA*((double)2*prng()/PRNG_MAX-1);
-
-    if(prng() < PRNG_MAX*p_accept(N, state, tempstate))
-        copy_state(N, tempstate, state);
+        if(prng() < PRNG_MAX*p_accept(N, state, tempstate))
+        {
+            state[i] = tempstate[i];
+        }
+        else
+        {
+            tempstate[i] = state[i];
+        }
+    }
 }
