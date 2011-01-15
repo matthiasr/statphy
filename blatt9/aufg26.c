@@ -90,6 +90,24 @@ void bin_density(const size_t N, const state_t* state, unsigned int* rho)
     }
 }
 
+void bin_correlation(const size_t N, const state_t* state, unsigned int* g)
+{
+    size_t i,j,k;
+    state_t r;
+    for(i=0;i<N/DIM;i++)
+        for(j=0;j<N/DIM;j++)
+            {
+                r = 0;
+                for(k=0;k<DIM;k++)
+                    r += dist(state[i*DIM+k],state[j*DIM+k])*dist(state[i*DIM+k],state[j*DIM+k]);
+                r = sqrt(r);
+                k = (size_t) (r * BINS / L);
+                assert( 0 <= k && k < BINS);
+                g[k]++;
+            }
+
+}
+
 state_t state_checksum(size_t N, const state_t* state)
 {
     state_t r = 0;
@@ -123,12 +141,14 @@ int init_state(const size_t N, state_t* state, state_t* tempstate)
 int main(int argc, char** argv)
 {
     size_t i,j,k,l;
-    unsigned int* rho;  
-    double* density;
+    unsigned int* rho,*g;
+    double* density,*correlation;
     state_t *state, *tempstate;
 
     density = malloc(sizeof(double)*BINS*sizeof(double)*BINS);
     rho = malloc(sizeof(unsigned int)*BINS*sizeof(unsigned int)*BINS);
+    correlation = malloc(sizeof(double)*BINS);
+    g = malloc(sizeof(unsigned int)*BINS);
     state = malloc(sizeof(state_t)*N);
     tempstate = malloc(sizeof(state_t)*N);
     assert(density!=NULL && rho!=NULL && state!=NULL && tempstate!=0);
@@ -140,6 +160,12 @@ int main(int argc, char** argv)
     {
         rho[i]=0;
         density[i] = 0;
+    }
+
+    for(i=0;i<BINS;i++)
+    {
+        g[i] = 0;
+        correlation[i] = 0;
     }
 
     for(l=0;l<CHAINS;l++)
@@ -155,6 +181,7 @@ int main(int argc, char** argv)
             metropolis_evolve_state(N, state, tempstate, p_accept);
             rewrap_state(N,state);
             bin_density(N, state, rho);
+            bin_correlation(N,state,g);
         }
     }
 
@@ -162,11 +189,19 @@ int main(int argc, char** argv)
     for(i=1;i<BINS*BINS;i++)
         density[i] = (double)rho[i] / (CHAINS*SAMPLES);
 
+    /* calculate correlation */
+    for(i=1;i<BINS;i++)
+        correlation[i] = (double)g[i] * pow(L,DIM) / ( 4*M_PI*(N/DIM)*(N/DIM) * (i*L/BINS)*(i*L/BINS) );
+
     for(i=1;i<BINS;i++)
         for(j=1;j<BINS;j++)
             printf("%lf %lf %lf %u\n", (double)i*L/(BINS), (double)j*L/(BINS), density[i*BINS+j], rho[i*BINS+j]);
 
     printf("\n\n");
+
+    printf("# correlation\n");
+    for(i=1;i<BINS;i++)
+        printf("%lf %lf %d\n", (double)i*L/BINS, correlation[i], g[i]);
     fflush(stdout);
 
     free(state);
