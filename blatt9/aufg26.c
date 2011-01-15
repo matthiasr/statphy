@@ -31,33 +31,6 @@ static inline prng_t prng(void)
     return (prng_t)(s >> 32)/UINT32_MAX;
 }
 
-static inline void copy_state(const size_t N, const state_t* from, state_t* to)
-{
-    size_t i;
-    for(i=0;i<N;i++) to[i] = from[i];
-}
-
-static inline void metropolis_evolve_state(const size_t N, state_t* state, state_t* tempstate,\
-        double (*p_accept)(const size_t N, const state_t* oldstate, const state_t* newstate))
-{
-    size_t i;
-
-    copy_state(N, state, tempstate);
-    /* evolve state */
-    for(i=0;i<N;i++)
-    {
-        tempstate[i] = state[i] + METROPOLIS_DELTA*((double)2*prng()/PRNG_MAX-1);
-        if(prng() < PRNG_MAX*p_accept(N, state, tempstate))
-        {
-            state[i] = tempstate[i];
-        }
-        else
-        {
-            tempstate[i] = state[i];
-        }
-    }
-}
-
 static const size_t N = 400*DIM;
 static const double eta = 0.1;
 static const double L = 56.04991216;
@@ -119,6 +92,32 @@ static inline double p_accept(size_t N, const state_t* oldstate, const state_t* 
     return 1;
 }
 
+static inline void copy_state(const size_t N, const state_t* from, state_t* to)
+{
+    size_t i;
+    for(i=0;i<N;i++) to[i] = from[i];
+}
+
+static inline void metropolis_evolve_state(const size_t N, state_t* state, state_t* tempstate)
+{
+    size_t i;
+
+    copy_state(N, state, tempstate);
+    /* evolve state */
+    for(i=0;i<N;i++)
+    {
+        tempstate[i] = state[i] + METROPOLIS_DELTA*((double)2*prng()/PRNG_MAX-1);
+        if(prng() < PRNG_MAX*p_accept(N, state, tempstate))
+        {
+            state[i] = tempstate[i];
+        }
+        else
+        {
+            tempstate[i] = state[i];
+        }
+    }
+}
+
 static inline void bin_density(const size_t N, const state_t* state, unsigned int* rho)
 {
 /* FIXME: not usable for DIM!=2 */
@@ -178,7 +177,7 @@ static inline int init_state(const size_t N, state_t* state, state_t* tempstate)
     /* burn in */
     for(i=0;i<BURNIN;i++)
     {
-        metropolis_evolve_state(N, state, tempstate, p_accept);
+        metropolis_evolve_state(N, state, tempstate);
         rewrap_state(N,state);
     }
 
@@ -225,7 +224,7 @@ int main(int argc, char** argv)
         /* sampling */
         for(i=0;i<SAMPLES;i++)
         {
-            metropolis_evolve_state(N, state, tempstate, p_accept);
+            metropolis_evolve_state(N, state, tempstate);
             rewrap_state(N,state);
             bin_density(N, state, rho);
             bin_correlation(N,state,g);
