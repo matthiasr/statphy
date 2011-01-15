@@ -13,12 +13,12 @@ plots: aufg26.pdf
 %.pdf: %.txt
 	./plot.sh $< $@
 
-aufg26: aufg26.o prng.o metropolis.o
+aufg26: aufg26.o
 
 aufg26.txt: aufg26
 	./aufg26 > $@
 
-aufg26.o: aufg26.c metropolis.h prng.h
+aufg26.o: aufg26.c
 
 prng.o: prng.c prng.h
 

@@ -1,5 +1,4 @@
-#include "prng.h"
-#include "metropolis.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -10,6 +9,54 @@
 #define BURNIN 1000
 #define SAMPLES 10000
 #define CHAINS 1
+
+#ifndef _THREAD_SAFE
+#define __thread
+#endif
+/* maximale Schrittweite */
+#ifndef METROPOLIS_DELTA
+#define METROPOLIS_DELTA 1
+#endif
+
+#define PRNG_MAX 1
+typedef double prng_t;
+typedef uint64_t prng_state_t;
+typedef double state_t;
+
+__thread static prng_state_t s = 1;
+
+static inline prng_t prng(void)
+{
+     s = 6364136223846793005LLU * s + 1442695040888963407LLU; /* implicit (mod) 2^64 */
+    return (prng_t)(s >> 32)/UINT32_MAX;
+}
+
+static inline void copy_state(const size_t N, const state_t* from, state_t* to)
+{
+    size_t i;
+    for(i=0;i<N;i++) to[i] = from[i];
+}
+
+static inline void metropolis_evolve_state(const size_t N, state_t* state, state_t* tempstate,\
+        double (*p_accept)(const size_t N, const state_t* oldstate, const state_t* newstate))
+{
+    size_t i;
+
+    copy_state(N, state, tempstate);
+    /* evolve state */
+    for(i=0;i<N;i++)
+    {
+        tempstate[i] = state[i] + METROPOLIS_DELTA*((double)2*prng()/PRNG_MAX-1);
+        if(prng() < PRNG_MAX*p_accept(N, state, tempstate))
+        {
+            state[i] = tempstate[i];
+        }
+        else
+        {
+            tempstate[i] = state[i];
+        }
+    }
+}
 
 static const size_t N = 400*DIM;
 static const double eta = 0.1;
@@ -52,7 +99,7 @@ static inline state_t dist(const state_t x0, const state_t x1)
     return x0 - wrap(x1,x0);
 }
 
-double p_accept(size_t N, const state_t* oldstate, const state_t* state)
+static inline double p_accept(size_t N, const state_t* oldstate, const state_t* state)
 {
     size_t i,j,k;
     double temp;
@@ -72,7 +119,7 @@ double p_accept(size_t N, const state_t* oldstate, const state_t* state)
     return 1;
 }
 
-void bin_density(const size_t N, const state_t* state, unsigned int* rho)
+static inline void bin_density(const size_t N, const state_t* state, unsigned int* rho)
 {
 /* FIXME: not usable for DIM!=2 */
 #if DIM!=2
@@ -90,7 +137,7 @@ void bin_density(const size_t N, const state_t* state, unsigned int* rho)
     }
 }
 
-void bin_correlation(const size_t N, const state_t* state, unsigned int* g)
+static inline void bin_correlation(const size_t N, const state_t* state, unsigned int* g)
 {
     size_t i,j,k;
     state_t r;
@@ -108,7 +155,7 @@ void bin_correlation(const size_t N, const state_t* state, unsigned int* g)
 
 }
 
-state_t state_checksum(size_t N, const state_t* state)
+static inline state_t state_checksum(size_t N, const state_t* state)
 {
     state_t r = 0;
     size_t i;
@@ -118,7 +165,7 @@ state_t state_checksum(size_t N, const state_t* state)
 }
 
 /* returns 0 if no valid state could be found */
-int init_state(const size_t N, state_t* state, state_t* tempstate)
+static inline int init_state(const size_t N, state_t* state, state_t* tempstate)
 {
     int i=0,j;
     while(i<N)
