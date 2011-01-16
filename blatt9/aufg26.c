@@ -167,7 +167,7 @@ static inline state_t state_checksum(size_t N, const state_t* state)
 static inline int init_state(const size_t N, state_t* state, state_t* tempstate)
 {
     int i=0,j;
-    while(i<N)
+    while(i<N/DIM)
     {
         for(j=0;j<DIM;j++)
             state[i*DIM+j] = L*prng();
