@@ -12,6 +12,7 @@ set size 1.0,0.5
 
 set origin 0.0, 0.5
 set title "Dichteverteilung"
+set ticslevel 0
 set dgrid3d 100
 set contour base
 splot "$1" index 0 using 1:2:3 with lines
