@@ -13,10 +13,6 @@
 #ifndef _THREAD_SAFE
 #define __thread
 #endif
-/* maximale Schrittweite */
-#ifndef METROPOLIS_DELTA
-#define METROPOLIS_DELTA 1
-#endif
 
 #define PRNG_MAX 1
 typedef double prng_t;
@@ -24,6 +20,9 @@ typedef uint64_t prng_state_t;
 typedef double state_t;
 
 __thread static prng_state_t s = 1;
+
+/* set this to 1 before sampling! */
+__thread static int metropolis_delta_fixed = 0;
 
 static inline prng_t prng(void)
 {
@@ -100,20 +99,38 @@ static inline void copy_state(const size_t N, const state_t* from, state_t* to)
 
 static inline void metropolis_evolve_state(const size_t N, state_t* state, state_t* tempstate)
 {
-    size_t i;
+    size_t i,accept_count = 0;
+    static state_t delta = 0.1;
 
     copy_state(N, state, tempstate);
     /* evolve state */
     for(i=0;i<N;i++)
     {
-        tempstate[i] = state[i] + METROPOLIS_DELTA*((double)2*prng()/PRNG_MAX-1);
+        tempstate[i] = state[i] + delta*((double)2*prng()/PRNG_MAX-1);
         if(prng() < PRNG_MAX*p_accept(N, state, tempstate))
         {
             state[i] = tempstate[i];
+            accept_count++;
         }
         else
         {
             tempstate[i] = state[i];
+        }
+    }
+
+    /* adjust step size towards acceptance rate of 0.5 */
+    if(!metropolis_delta_fixed)
+    {
+        delta *= exp( ((double)accept_count)/((double)N) - 0.5 );
+        /* catch runaway delta
+         * happens because the system is periodic (i.e. arbitrarily
+         * large jumps are possible) and sparse (i.e. any large jump
+         * is likely to be accepted)
+         */
+        if(delta > L)
+        {
+            delta = L;
+            metropolis_delta_fixed = 1;
         }
     }
 }
@@ -175,11 +192,13 @@ static inline int init_state(const size_t N, state_t* state, state_t* tempstate)
     }
 
     /* burn in */
+    metropolis_delta_fixed = 0;
     for(i=0;i<BURNIN;i++)
     {
         metropolis_evolve_state(N, state, tempstate);
         rewrap_state(N,state);
     }
+    metropolis_delta_fixed = 1;
 
     return 1;
 }
