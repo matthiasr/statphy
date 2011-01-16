@@ -122,7 +122,7 @@ static inline void bin_density(const size_t N, const state_t* state, unsigned in
 {
 /* FIXME: not usable for DIM!=2 */
 #if DIM!=2
-#error "bin_density not implemented for DIM!=2
+#error "bin_density not implemented for DIM!=2"
 #endif
     size_t i,j,k;
     size_t xbin,ybin;
