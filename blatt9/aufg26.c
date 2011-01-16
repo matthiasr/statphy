@@ -5,7 +5,7 @@
 #include <assert.h>
 
 #define DIM 2
-#define BINS 100
+#define BINS 1000
 #define BURNIN 1000
 #define SAMPLES 10000
 #define CHAINS 1
