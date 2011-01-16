@@ -256,7 +256,7 @@ int main(int argc, char** argv)
 
     /* calculate correlation */
     for(i=1;i<BINS;i++)
-        correlation[i] = (double)g[i] * pow(L,DIM) / ( 4*M_PI*(N/DIM)*(N/DIM) * (i*L/BINS)*(i*L/BINS) );
+        correlation[i] = (double)g[i] * pow(L,DIM) / ( 4*M_PI*(N/DIM)*(N/DIM) * (i*L/BINS)*(i*L/BINS) * SAMPLES );
 
     for(i=1;i<BINS;i++)
         for(j=1;j<BINS;j++)
