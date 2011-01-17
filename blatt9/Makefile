@@ -19,10 +19,6 @@ aufg26.txt: aufg26
 
 aufg26.o: aufg26.c
 
-prng.o: prng.c prng.h
-
-metropolis.o: metropolis.c metropolis.h prng.h
-
 .PHONY: clean distclean
 
 .PRECIOUS: aufg26.txt
