@@ -29,9 +29,18 @@ static inline prng_t prng(void)
 /* number of particles */
 static const size_t N = 400;
 /* density */
-static const double rho = 0.6;
-/* area side length = sqrt((double)N/rho) */
-static const vect L = {25.81988897,25.81988897};
+static double RHO;
+/* area side length = sqrt((double)N/RHO) */
+static double L;
+
+/* cutoff radius */
+static const double RC = 2.5;
+
+void set_rho(const double rho)
+{
+    RHO = rho;
+    L = sqrt((double)N/rho);
+}
 
 /* wrap the coordinate X according to the minimum image convention
  * with regard to ref
@@ -41,13 +50,13 @@ static inline vect wrap(vect r, const vect ref)
 {
     while( 1 )
     {
-        if( r.x - ref.x > 0.5*L.x )
+        if( r.x - ref.x > 0.5*L )
         {
-            r.x -= L.x;
+            r.x -= L;
         }
-        else if( ref.x - r.x >= 0.5*L.x )
+        else if( ref.x - r.x >= 0.5*L )
         {
-            r.x += L.x;
+            r.x += L;
         }
         else
         {
@@ -56,13 +65,13 @@ static inline vect wrap(vect r, const vect ref)
     }
     while( 1 )
     {
-        if( r.y - ref.y > 0.5*L.y )
+        if( r.y - ref.y > 0.5*L )
         {
-            r.y -= L.y;
+            r.y -= L;
         }
-        else if( ref.y - r.y >= 0.5*L.y )
+        else if( ref.y - r.y >= 0.5*L )
         {
-            r.y += L.y;
+            r.y += L;
         }
         else
         {
@@ -75,7 +84,7 @@ static inline vect wrap(vect r, const vect ref)
 static inline void rewrap_state(size_t N, vect* state)
 {
     size_t i;
-    const vect CENTER = { 0.5*L.x, 0.5*L.y };
+    const vect CENTER = { 0.5*L, 0.5*L };
     for(i=0;i<N;i++)
         state[i] = wrap(state[i], CENTER);
 }
