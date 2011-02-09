@@ -89,13 +89,20 @@ static inline void rewrap_state(size_t N, vect* state)
         state[i] = wrap(state[i], CENTER);
 }
 
+/* vector difference */
+static inline vect direction(vect r0, vect r1)
+{
+    r1 = wrap(r1,r0);
+    r0.x -= r1.x;
+    r0.y -= r1.y;
+    return r0;
+}
+
 /* wrapped distance */
 static inline double dist(vect r0, const vect r1)
 {
-    r0 = wrap(r0,r1);
-    double dx = r0.x - r1.x;
-    double dy = r0.y - r1.y;
-    return sqrt(dx*dx + dy*dy);
+    r0 = direction(r0,r1);
+    return sqrt(r0.x*r0.x + r0.y*r0.y);
 }
 
 int main(int argc, char* argv[])
