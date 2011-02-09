@@ -105,6 +105,66 @@ static inline double dist(vect r0, const vect r1)
     return sqrt(r0.x*r0.x + r0.y*r0.y);
 }
 
+/* calculate shifted Lennard-Jones force between particles
+ * at r0 and r1 */
+static inline vect lj_force(const vect r0, const vect r1)
+{
+    const double r = dist(r0,r1);
+    vect d;
+    if ( r > RC || r < 1E-6 )
+    {
+        d.x = d.y = 0;
+    }
+    else
+    {
+        const double r6 = r*r*r*r*r*r;
+        const double r13 = r6*r6*r;
+        const double RC6 = RC*RC*RC*RC*RC*RC;
+        const double RC13 = RC6*RC6*RC;
+        const double f = (24*r6-48)/r13 - (24*RC6-48)/RC13;
+        d = direction(r0,r1);
+        d.x *= f/r;
+        d.y *= f/r;
+    }
+    return d;
+}
+
+
+/* Leapfrog integration */
+static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double dt)
+{
+    vect* accel = malloc(N*sizeof(vect));
+    assert(accel!=NULL);
+    size_t i,j;
+    vect f;
+
+    /* calculate accelerations */
+#pragma omp parallel for private(i,j,f) shared(accel)
+    for(i=0;i<N;i++)
+    {
+        accel[i] = 0;
+        for(j=0;j<N;j++)
+            if(i!=j)
+            {
+                f = lj_force(pos[i],pos[j]);
+                accel[i].x += f.x;
+                accel[i].y -= f.y;
+            }
+    }
+
+    /* advance velocities */
+#pragma omp parallel for private(i) shared(accel,vel,dt)
+    for(i=0;i<N;i++)
+        vel[i] += accel[i]*dt;
+
+    /* advance positions */
+#pragma omp parallel for private(i) shared(pos,vel,dt)
+    for(i=0;i<N;i++)
+        pos[i] += vel[i]*dt;
+
+    free(accel);
+}
+
 int main(int argc, char* argv[])
 {
 
