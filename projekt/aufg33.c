@@ -261,4 +261,5 @@ int main(int argc, char* argv[])
 {
     init_prng();
 
+    exit(0);
 }
