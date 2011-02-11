@@ -98,11 +98,17 @@ static inline vect direction(vect r0, vect r1)
     return r0;
 }
 
-/* wrapped distance */
-static inline double dist(vect r0, const vect r1)
+/* wrapped distance squared */
+static inline double dist2(vect r0, const vect r1)
 {
     r0 = direction(r0,r1);
-    return sqrt(r0.x*r0.x + r0.y*r0.y);
+    return (r0.x*r0.x + r0.y*r0.y);
+}
+
+/* wrapped distance */
+static inline double dist(const vect r0, const vect r1)
+{
+    return sqrt(dist2(r0,r1));
 }
 
 /* calculate shifted Lennard-Jones force between particles
