@@ -223,6 +223,7 @@ static inline double potential_energy(const size_t N, const vect* pos)
         e += ee;
     }
 
+    return e;
 }
 
 static inline double total_energy(const size_t N, const vect* pos, const vect* vel)
