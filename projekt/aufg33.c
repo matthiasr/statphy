@@ -135,6 +135,27 @@ static inline vect lj_force(const vect r0, const vect r1)
     return d;
 }
 
+/* calculate shifted Lennard-Jones potential between particles
+ * at r0 and r1 */
+static inline double lj_energy(const vect r0, const vect r1)
+{
+    double rr = dist2(r0,r1);
+    if ( rr > RC*RC )
+    {
+        return 0;
+    }
+    else if ( rr < 1E-12 )
+    {
+        rr = 1E-12;
+    }
+
+    const double r6 = rr*rr*rr;
+    const double r12 = r6*r6;
+    const double RC6 = RC*RC*RC*RC*RC*RC;
+    const double RC12 = RC6*RC6;
+
+    return 4*(1./r12 - 1./r6) - 4*(1./RC12 - 1./RC6) - (sqrt(rr) - RC)*(24*RC6 - 48)/(RC12*RC);
+}
 
 /* Leapfrog integration */
 static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double dt)
@@ -176,6 +197,32 @@ static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double
     }
 
     free(accel);
+}
+
+static inline double kinetic_energy(const size_t N, const vect* vel)
+{
+    size_t i;
+    double e = 0;
+#pragma omp parallel for private(i) reduction(+:e)
+    for(i=0;i<N;i++)
+        e += 0.5*(vel[i].x*vel[i].x + vel[i].y*vel[i].y);
+    return e;
+}
+
+static inline double potential_energy(const size_t N, const vect* pos)
+{
+    size_t i,j;
+    double e = 0, ee;
+#pragma omp parallel for private(i,j,ee) reduction(+:e)
+    for(i=0;i<N;i++)
+    {
+        ee = 0;
+        for(j=0;j<N;j++)
+            if(i!=j)
+                ee += lj_energy(pos[i],pos[j]);
+        e += ee;
+    }
+
 }
 
 int main(int argc, char* argv[])
