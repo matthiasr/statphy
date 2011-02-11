@@ -225,6 +225,11 @@ static inline double potential_energy(const size_t N, const vect* pos)
 
 }
 
+static inline double total_energy(const size_t N, const vect* pos, const vect* vel)
+{
+    return potential_energy(N, pos) + kinetic_energy(N, vel);
+}
+
 int main(int argc, char* argv[])
 {
 
