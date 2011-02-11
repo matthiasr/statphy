@@ -1,5 +1,5 @@
-LDFLAGS = -lm -O3
-CFLAGS = -g -O3
+LDFLAGS = -lm -O3 -fopenmp
+CFLAGS = -g -O3 -fopenmp
 
 all: bin
 
