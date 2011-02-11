@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+#ifdef _OPENMP
+#include <omp.h>
+#else
+#define omp_get_thread_num() 0
+#define omp_get_num_threads() 1
+#endif
 
 #define BINS 1000
 #define BURNIN 1000
