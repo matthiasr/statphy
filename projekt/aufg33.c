@@ -148,7 +148,8 @@ static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double
 #pragma omp parallel for private(i,j,f) shared(accel)
     for(i=0;i<N;i++)
     {
-        accel[i] = 0;
+        accel[i].x = 0;
+        accel[i].y = 0;
         for(j=0;j<N;j++)
             if(i!=j)
             {
@@ -161,12 +162,18 @@ static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double
     /* advance velocities */
 #pragma omp parallel for private(i) shared(accel,vel,dt)
     for(i=0;i<N;i++)
-        vel[i] += accel[i]*dt;
+    {
+        vel[i].x += accel[i].x*dt;
+        vel[i].y += accel[i].y*dt;
+    }
 
     /* advance positions */
 #pragma omp parallel for private(i) shared(pos,vel,dt)
     for(i=0;i<N;i++)
-        pos[i] += vel[i]*dt;
+    {
+        pos[i].x += vel[i].x*dt;
+        pos[i].y += vel[i].y*dt;
+    }
 
     free(accel);
 }
