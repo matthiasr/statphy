@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <sys/time.h>
 #include <assert.h>
 #ifdef _OPENMP
 #include <omp.h>
 #else
 #define omp_get_thread_num() 0
 #define omp_get_num_threads() 1
+#define omp_get_max_threads() 1
 #endif
 
 #define BINS 1000
@@ -24,12 +26,30 @@ typedef uint64_t prng_state_t;
 
 typedef struct { double x; double y; } vect;
 
-__thread static prng_state_t s = 1;
+__thread static prng_state_t *s = NULL;
+
+/* initialize random number generator */
+static inline void init_prng(void)
+{
+#pragma omp master
+    {
+        struct timeval t;
+        int i;
+        gettimeofday(&t,NULL);
+        s = malloc(sizeof(prng_state_t)*omp_get_num_threads());
+        assert(s!=NULL);
+        for(i=0;i<omp_get_max_threads();i++)
+        {
+            s[i] = (i+1) * (t.tv_usec+t.tv_sec*1000000);
+        }
+    }
+}
 
 static inline prng_t prng(void)
 {
-     s = 6364136223846793005LLU * s + 1442695040888963407LLU; /* implicit (mod) 2^64 */
-    return (prng_t)(s >> 32)/UINT32_MAX;
+    assert(s!=NULL);
+    s[omp_get_thread_num()] = 6364136223846793005LLU * s[omp_get_thread_num()] + 1442695040888963407LLU; /* implicit (mod) 2^64 */
+    return (prng_t)(s[omp_get_thread_num()] >> 32)/UINT32_MAX;
 }
 
 /* number of particles */
@@ -239,5 +259,6 @@ static inline double total_energy(const size_t N, const vect* pos, const vect* v
 
 int main(int argc, char* argv[])
 {
+    init_prng();
 
 }
