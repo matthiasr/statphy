@@ -168,7 +168,7 @@ static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double
 {
     vect* accel = malloc(N*sizeof(vect));
     assert(accel!=NULL);
-    size_t i,j;
+    long i,j;
     vect f;
 
     /* calculate accelerations */
@@ -207,7 +207,7 @@ static inline void lf_advance(const size_t N, vect* pos, vect* vel, const double
 
 static inline double kinetic_energy(const size_t N, const vect* vel)
 {
-    size_t i;
+    long i;
     double e = 0;
 #pragma omp parallel for private(i) reduction(+:e)
     for(i=0;i<N;i++)
@@ -217,7 +217,7 @@ static inline double kinetic_energy(const size_t N, const vect* vel)
 
 static inline double potential_energy(const size_t N, const vect* pos)
 {
-    size_t i,j;
+    long i,j;
     double e = 0, ee;
 #pragma omp parallel for private(i,j,ee) reduction(+:e)
     for(i=0;i<N;i++)
